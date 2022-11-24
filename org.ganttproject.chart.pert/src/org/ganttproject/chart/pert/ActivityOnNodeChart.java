@@ -45,7 +45,7 @@ import java.util.List;
  * @author Julien Seiler
  *
  */
-public class ActivityOnNodePertChart extends PertChart {
+public class ActivityOnNodeChart extends PertChart {
 
   /** List of abstract nodes. */
   private List<TaskGraphNode> myTaskGraphNodes;
@@ -80,8 +80,8 @@ public class ActivityOnNodePertChart extends PertChart {
 
   private final static int NODE_WIDTH = 110;// 205;
 
-  private final static int NODE_HEIGHT = 70;
-  //private final static int NODE_HEIGHT = 170;
+  //private final static int NODE_HEIGHT = 70;
+  private final static int NODE_HEIGHT = 170;
 
   private final static int X_GAP = 30;// 60;
 
@@ -111,7 +111,7 @@ public class ActivityOnNodePertChart extends PertChart {
 
   private final JScrollPane myScrollPane;
 
-  public ActivityOnNodePertChart() {
+  public ActivityOnNodeChart() {
     setBackground(Color.WHITE.brighter());
 
     this.addMouseMotionListener(new MouseMotionListener() {
@@ -121,12 +121,12 @@ public class ActivityOnNodePertChart extends PertChart {
           myPressedGraphicalNode.x = e.getX() - myXClickedOffset;
           myPressedGraphicalNode.y = e.getY() - myYClickedOffset;
           if (e.getX() > getPreferredSize().getWidth()) {
-            ActivityOnNodePertChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
+            ActivityOnNodeChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
                 (int) getPreferredSize().getHeight()));
             revalidate();
           }
           if (e.getY() > getPreferredSize().getHeight()) {
-            ActivityOnNodePertChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
+            ActivityOnNodeChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
                 myPressedGraphicalNode.y + getNodeHeight() + getyGap()));
             revalidate();
           }
@@ -657,9 +657,15 @@ public class ActivityOnNodePertChart extends PertChart {
     return image;
   }
 
+  /*
   @Override
   public String getName() {
     return language.getText("pertChartLongName");
+  }
+  */
+
+  public String getName() {
+    return "AON Diagram";
   }
 
   @Override

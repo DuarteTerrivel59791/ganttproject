@@ -138,9 +138,7 @@ public class PertChartAbstraction {
       return myTask.getName();
     }
 
-    TimeDuration getDuration() {
-      return myTask.getDuration();
-    }
+    TimeDuration getDuration() { return myTask.getDuration(); }
 
     int getID() {
       return myTask.getTaskID();
