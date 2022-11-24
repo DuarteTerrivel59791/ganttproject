@@ -18,4 +18,8 @@
          point="net.sourceforge.ganttproject.chart">
          <exporter class="org.ganttproject.chart.pert.ActivityOnNodePertChart"/>
    </extension>
+   <extension
+           point="net.sourceforge.ganttproject.chart">
+      <chart class="org.ganttproject.chart.pert.ActivityOnNodeChart"/>
+   </extension>
 </plugin>

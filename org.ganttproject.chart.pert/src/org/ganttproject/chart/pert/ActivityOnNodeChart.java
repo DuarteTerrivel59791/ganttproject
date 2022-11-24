@@ -78,10 +78,9 @@ public class ActivityOnNodeChart extends PertChart {
 
   private final static GanttLanguage language = GanttLanguage.getInstance();
 
-  private final static int NODE_WIDTH = 110;// 205;
+  private final static int NODE_WIDTH = 200;
 
-  //private final static int NODE_HEIGHT = 70;
-  private final static int NODE_HEIGHT = 170;
+  private final static int NODE_HEIGHT = 130;
 
   private final static int X_GAP = 30;// 60;
 
@@ -519,6 +518,7 @@ public class ActivityOnNodeChart extends PertChart {
     return false;
   }
 
+  /*
   private List<TaskGraphNode> getAncestor(TaskGraphNode tgn) {
     List<TaskGraphNode> ancestors = new ArrayList<>();
     for (TaskGraphNode tnode : myTaskGraphNodes) {
@@ -529,9 +529,10 @@ public class ActivityOnNodeChart extends PertChart {
     }
     return ancestors;
   }
+  */
 
   private boolean isCrossingNode(GraphicalNode gnode) {
-    for (TaskGraphNode ancestor : getAncestor(gnode.node)) {
+    for (TaskGraphNode ancestor : myPertAbstraction.getAncestor(gnode.node)) {
       GraphicalNode gancestor = getGraphicalNodeByID(ancestor.getID());
       if (gancestor.col < gnode.col - 1) {
         for (int col = gnode.col - 1; col > gancestor.col; col--) {
@@ -665,7 +666,7 @@ public class ActivityOnNodeChart extends PertChart {
   */
 
   public String getName() {
-    return "AON Diagram";
+    return language.getText("aonDiagram");
   }
 
   @Override
@@ -757,7 +758,6 @@ public class ActivityOnNodeChart extends PertChart {
    */
   private class GraphicalNode extends JComponent {
     private TaskGraphNode node;
-
     private int col = -1; // determines X
     private int row = -1;
 
@@ -852,11 +852,27 @@ public class ActivityOnNodeChart extends PertChart {
       g.drawString(language.getText("end") + ": " + node.getEndDate().toString(), x + getTextPaddingX(),
           (int) (y + getTextPaddingY() + 3.3 * fontMetrics.getHeight()));
 
-      if (node.getDuration() != null)
+      if (node.getDuration() != null) {
         g.drawString(language.getText("duration") + ": " + node.getDuration().getLength(), x + getTextPaddingX(),
-            (int) (y + getTextPaddingY() + 4.3 * fontMetrics.getHeight()));
+                (int) (y + getTextPaddingY() + 4.3 * fontMetrics.getHeight()));
 
-      // TODO: Add Slack, LST and LFT
+        // TODO: Add Slack, LST and LFT
+
+        g.setColor(color);
+        g.drawLine(x, (int) (y + getTextPaddingY() + 4.6*fontMetrics.getHeight() + getYOffset()), x + getNodeWidth(), (int) (y + getTextPaddingY() + 4.6*fontMetrics.getHeight()
+                        + getYOffset()));
+
+        g.setColor(Color.BLACK);
+        g.drawString(language.getText("lateStart") + ": ", x + getTextPaddingX(),
+                (int) (y + getTextPaddingY() + 6.3 * fontMetrics.getHeight()));
+
+        g.drawString(language.getText("lateFinish") + ": ", x + getTextPaddingX(),
+                (int) (y + getTextPaddingY() + 7.3 * fontMetrics.getHeight()));
+
+        g.drawString(language.getText("slack") + ": ", x + getTextPaddingX(),
+                (int) (y + getTextPaddingY() + 8.3 * fontMetrics.getHeight()));
+      }
+
       g.setFont(f);
 
     }

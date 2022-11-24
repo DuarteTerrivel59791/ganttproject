@@ -66,9 +66,10 @@ class ViewHolder implements ChartSelectionListener, GanttLanguage.Listener {
       myTabs.addTab(tabName, myIcon, myView.getViewComponent(), tabName, myView);
       myTabs.setSelectedComponent(myView.getViewComponent());
       myIndex = myTabs.getSelectedIndex();
-
+      System.out.println(myIndex);
     } else {
       myTabs.remove(myIndex);
+      System.out.println(myIndex);
     }
     this.isVisible = isVisible;
   }

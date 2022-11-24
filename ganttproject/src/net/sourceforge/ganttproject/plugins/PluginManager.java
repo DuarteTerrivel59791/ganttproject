@@ -50,7 +50,6 @@ public class PluginManager {
     ArrayList<T> extensions = new ArrayList<T>();
     for (IConfigurationElement configElement : extensionRegistry.getConfigurationElementsFor(extensionPointID)) {
       try {
-        System.out.println(configElement.toString());
         Object nextExtension = configElement.createExecutableExtension("class");
         assert nextExtension != null && extensionPointInterface.isAssignableFrom(nextExtension.getClass());
         extensions.add((T) nextExtension);

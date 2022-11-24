@@ -100,6 +100,17 @@ public class PertChartAbstraction {
     return null;
   }
 
+  public List<TaskGraphNode> getAncestor(TaskGraphNode tgn) {
+    List<TaskGraphNode> ancestors = new ArrayList<>();
+    for (TaskGraphNode tnode : myTaskGraph) {
+      List<TaskGraphNode> successor = tnode.getSuccessors();
+      if (successor.contains(tgn)) {
+        ancestors.add(tnode);
+      }
+    }
+    return ancestors;
+  }
+
   /**
    * PERT graph node abstraction
    *
