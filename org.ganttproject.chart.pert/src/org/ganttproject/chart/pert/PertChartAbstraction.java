@@ -18,14 +18,19 @@ along with GanttProject.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.ganttproject.chart.pert;
 
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
+import biz.ganttproject.core.time.CalendarFactory;
+import biz.ganttproject.core.time.GanttCalendar;
 import biz.ganttproject.core.time.TimeDuration;
 
+import biz.ganttproject.core.time.TimeDurationImpl;
+import biz.ganttproject.core.time.impl.GPTimeUnitStack;
+import com.sun.org.apache.bcel.internal.generic.MONITORENTER;
 import net.sourceforge.ganttproject.task.Task;
+import net.sourceforge.ganttproject.task.TaskImpl;
 import net.sourceforge.ganttproject.task.TaskManager;
+import net.sourceforge.ganttproject.task.TaskMutator;
 import net.sourceforge.ganttproject.task.dependency.TaskDependency;
 import net.sourceforge.ganttproject.task.dependency.TaskDependencySlice;
 
@@ -48,15 +53,16 @@ public class PertChartAbstraction {
   private void load() {
     Task[] tasks = myTaskManager.getTasks();
     for (int i = 0; i < tasks.length; i++) {
-      Task task = tasks[i];
-      TaskGraphNode tgn = getTaskGraphNode(task);
-      TaskDependencySlice dependencies = task.getDependenciesAsDependee();
-      TaskDependency[] relationship = dependencies.toArray();
-      for (int j = 0; j < relationship.length; j++) {
-        Task successor = relationship[j].getDependant();
-        tgn.addSuccessor(getTaskGraphNode(successor));
-      }
+        Task task = tasks[i];
+        TaskGraphNode tgn = getTaskGraphNode(task);
+        TaskDependencySlice dependencies = task.getDependenciesAsDependee();
+        TaskDependency[] relationship = dependencies.toArray();
+        for (int j = 0; j < relationship.length; j++) {
+            Task successor = relationship[j].getDependant();
+            tgn.addSuccessor(getTaskGraphNode(successor));
+        }
     }
+    //createdummyFinishNode();
   }
 
   /**
@@ -111,18 +117,66 @@ public class PertChartAbstraction {
     return ancestors;
   }
 
+
+  public void calculateLateDates(){
+        Iterator<TaskGraphNode> it = myTaskGraph.iterator();
+        List<TaskGraphNode> queue = new ArrayList<>();
+        do {
+            queue.clear();
+            while (it.hasNext()) {
+                TaskGraphNode aux = it.next();
+                aux.calculateLateDates();
+                GregorianCalendar LFT = aux.getLFT();
+                if (LFT == null) {
+                    queue.add(aux);
+                }
+            }
+            List<TaskGraphNode> copy = new ArrayList<>();
+            copy.addAll(queue);
+            it = copy.iterator();
+        } while(!queue.isEmpty());
+  }
+
+  private TaskGraphNode createdummyFinishNode(){
+
+        Task task = myTaskManager.getRootTask().unpluggedClone();
+        GanttCalendar calendar = CalendarFactory.createGanttCalendar(myTaskManager.getProjectEnd());
+        task.setStart(calendar);
+        task.setEnd(calendar);
+        task.setName("Finished Messi");
+        TaskGraphNode dummy = new TaskGraphNode(task);
+
+        Iterator<TaskGraphNode> it = myTaskGraph.iterator();
+        while(it.hasNext()){
+            TaskGraphNode node = it.next();
+            if(node.getSuccessors().isEmpty())
+                node.addSuccessor(dummy);
+        }
+        return dummy;
+    }
+
+
+
+
+
   /**
    * PERT graph node abstraction
    *
    * @author bbaranne
    */
-  static class TaskGraphNode {
+   static class TaskGraphNode {
 
     private List<TaskGraphNode> successors;
 
     private int type;
 
     private Task myTask;
+
+    private TimeDuration slack;
+
+    private GregorianCalendar LFT;
+
+    private GregorianCalendar LST;
 
     TaskGraphNode(Task task) {
       successors = new ArrayList<TaskGraphNode>();
@@ -171,6 +225,58 @@ public class PertChartAbstraction {
     GregorianCalendar getStartDate() {
       return myTask.getStart();
     }
+
+    private void calculateSlack(){
+       float slackie =  getLFT().getTime().getTime() - getEndDate().getTime().getTime();
+
+       long slackInDays = (long) (slackie/(1000 * 60 * 60 * 24));
+
+       this.slack = new TimeDurationImpl(GPTimeUnitStack.DAY, slackInDays);
+    }
+
+    TimeDuration getSlack(){
+        return slack;
+    }
+
+    private void calculateLateFinish(){
+      if (successors.size() == 0)
+        LFT = getEndDate();
+      Iterator<TaskGraphNode> it = successors.iterator();
+      TaskGraphNode chosen = it.next();
+      while(it.hasNext()){
+          TaskGraphNode aux = it.next();
+          if (aux.getLST() == null)
+            return;
+          if(aux.getLST().before(chosen.getLST()))
+            chosen = aux;
+      }
+
+      LFT = chosen.getLST();
+    }
+
+    GregorianCalendar getLFT(){
+        return LFT;
+    }
+
+    private void calculateLateStart(){
+        Task auxTask = myTask.unpluggedClone();
+        auxTask.shift(getSlack());
+
+      LST = auxTask.getStart();
+    }
+
+    GregorianCalendar getLST(){
+        return LST;
+    }
+
+    void calculateLateDates(){
+        calculateLateFinish();
+        if (LFT != null){
+            calculateSlack();
+                calculateLateStart();
+        }
+    }
+
   }
 
   /**
