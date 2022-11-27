@@ -26,11 +26,8 @@ import biz.ganttproject.core.time.TimeDuration;
 
 import biz.ganttproject.core.time.TimeDurationImpl;
 import biz.ganttproject.core.time.impl.GPTimeUnitStack;
-import com.sun.org.apache.bcel.internal.generic.MONITORENTER;
 import net.sourceforge.ganttproject.task.Task;
-import net.sourceforge.ganttproject.task.TaskImpl;
 import net.sourceforge.ganttproject.task.TaskManager;
-import net.sourceforge.ganttproject.task.TaskMutator;
 import net.sourceforge.ganttproject.task.dependency.TaskDependency;
 import net.sourceforge.ganttproject.task.dependency.TaskDependencySlice;
 
@@ -62,7 +59,8 @@ public class PertChartAbstraction {
             tgn.addSuccessor(getTaskGraphNode(successor));
         }
     }
-    //createdummyFinishNode();
+    //createDummyFinishNode();
+    //calculateLateDates();
   }
 
   /**
@@ -137,7 +135,7 @@ public class PertChartAbstraction {
         } while(!queue.isEmpty());
   }
 
-  private TaskGraphNode createdummyFinishNode(){
+  private TaskGraphNode createDummyFinishNode(){
 
         Task task = myTaskManager.getRootTask().unpluggedClone();
         GanttCalendar calendar = CalendarFactory.createGanttCalendar(myTaskManager.getProjectEnd());
@@ -152,6 +150,8 @@ public class PertChartAbstraction {
             if(node.getSuccessors().isEmpty())
                 node.addSuccessor(dummy);
         }
+        System.out.println(task.getEnd());
+        dummy.calculateLateDates();
         return dummy;
     }
 
@@ -239,8 +239,10 @@ public class PertChartAbstraction {
     }
 
     private void calculateLateFinish(){
-      if (successors.size() == 0)
+      if (successors.size() == 0){
         LFT = getEndDate();
+        return;
+      }
       Iterator<TaskGraphNode> it = successors.iterator();
       TaskGraphNode chosen = it.next();
       while(it.hasNext()){
@@ -251,7 +253,7 @@ public class PertChartAbstraction {
             chosen = aux;
       }
 
-      LFT = chosen.getLST();
+        LFT = chosen.getLST();
     }
 
     GregorianCalendar getLFT(){

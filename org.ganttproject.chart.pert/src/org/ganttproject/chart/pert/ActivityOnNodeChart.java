@@ -365,7 +365,7 @@ public class ActivityOnNodeChart extends PertChart {
         if (gnode == null) {
           gnode = createGraphicalNode(tnode);
         } else {
-          remove(gnode);
+            remove(gnode);
         }
         add(col + 1, gnode);
       }
@@ -420,7 +420,6 @@ public class ActivityOnNodeChart extends PertChart {
 
   private void remove(GraphicalNode graphicalNode) {
     myGraphicalNodes.remove(graphicalNode);
-
     if (graphicalNode.col == -1) {
       return;
     }
@@ -658,13 +657,6 @@ public class ActivityOnNodeChart extends PertChart {
     return image;
   }
 
-  /*
-  @Override
-  public String getName() {
-    return language.getText("pertChartLongName");
-  }
-  */
-
   public String getName() {
     return language.getText("aonDiagram");
   }
@@ -864,13 +856,13 @@ public class ActivityOnNodeChart extends PertChart {
 
 
         g.setColor(Color.BLACK);
-        g.drawString(language.getText("lateStart") + ": ", x + getTextPaddingX(),
+        g.drawString(language.getText("lateStart") + ": " + node.getLST().toString(), x + getTextPaddingX(),
                 (int) (y + getTextPaddingY() + 6.3 * fontMetrics.getHeight()));
 
-        g.drawString(language.getText("lateFinish") + ": ", x + getTextPaddingX(),
+        g.drawString(language.getText("lateFinish") + ": " + node.getLFT().toString(), x + getTextPaddingX(),
                 (int) (y + getTextPaddingY() + 7.3 * fontMetrics.getHeight()));
 
-        g.drawString(language.getText("slack") + ": ", x + getTextPaddingX(),
+        g.drawString(language.getText("slack") + ": " + node.getSlack().toString(), x + getTextPaddingX(),
                 (int) (y + getTextPaddingY() + 8.3 * fontMetrics.getHeight()));
       }
 
