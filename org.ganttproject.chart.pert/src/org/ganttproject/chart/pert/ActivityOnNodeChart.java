@@ -855,6 +855,7 @@ public class ActivityOnNodeChart extends PertChart {
                         + getYOffset()));
 
 
+
         g.setColor(Color.BLACK);
         g.drawString(language.getText("lateStart") + ": " + node.getLST().toString(), x + getTextPaddingX(),
                 (int) (y + getTextPaddingY() + 6.3 * fontMetrics.getHeight()));

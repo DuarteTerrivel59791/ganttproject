@@ -63,6 +63,7 @@ public class PertChartAbstraction {
     //calculateLateDates();
   }
 
+
   /**
    * @param task
    *          The task from which we want the <code>TaskGraphNode</code>
