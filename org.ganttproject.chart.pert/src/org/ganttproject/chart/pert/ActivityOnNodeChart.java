@@ -284,6 +284,7 @@ public class ActivityOnNodeChart extends PertChart {
   protected void buildPertChart() {
     if (myPertAbstraction == null) {
       myPertAbstraction = new PertChartAbstraction(myTaskManager);
+      //myPertAbstraction.createDummyFinishNode();
       myTaskGraphNodes = myPertAbstraction.getTaskGraphNodes();
       myGraphicalNodes = new ArrayList<>();
       myGraphicalArrows = new ArrayList<>();

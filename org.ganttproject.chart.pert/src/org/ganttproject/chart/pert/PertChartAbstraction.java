@@ -59,8 +59,8 @@ public class PertChartAbstraction {
             tgn.addSuccessor(getTaskGraphNode(successor));
         }
     }
-    //createDummyFinishNode();
-    //calculateLateDates();
+    createDummyFinishNode();
+    calculateLateDates();
   }
 
 
@@ -116,7 +116,6 @@ public class PertChartAbstraction {
     return ancestors;
   }
 
-
   public void calculateLateDates(){
         Iterator<TaskGraphNode> it = myTaskGraph.iterator();
         List<TaskGraphNode> queue = new ArrayList<>();
@@ -136,13 +135,14 @@ public class PertChartAbstraction {
         } while(!queue.isEmpty());
   }
 
-  private TaskGraphNode createDummyFinishNode(){
+  protected TaskGraphNode createDummyFinishNode(){
 
         Task task = myTaskManager.getRootTask().unpluggedClone();
         GanttCalendar calendar = CalendarFactory.createGanttCalendar(myTaskManager.getProjectEnd());
         task.setStart(calendar);
         task.setEnd(calendar);
         task.setName("Finished Messi");
+        //task.shift(new TimeDurationImpl(GPTimeUnitStack.DAY, -1));
         TaskGraphNode dummy = new TaskGraphNode(task);
 
         Iterator<TaskGraphNode> it = myTaskGraph.iterator();
@@ -151,13 +151,10 @@ public class PertChartAbstraction {
             if(node.getSuccessors().isEmpty())
                 node.addSuccessor(dummy);
         }
-        System.out.println(task.getEnd());
+
         dummy.calculateLateDates();
         return dummy;
     }
-
-
-
 
 
   /**
@@ -211,7 +208,8 @@ public class PertChartAbstraction {
     }
 
     boolean isCritical() {
-      return myTask.isCritical();
+        return slack.getLength() == 0;
+        //return myTask.isCritical();
     }
 
     @Override
@@ -227,13 +225,27 @@ public class PertChartAbstraction {
       return myTask.getStart();
     }
 
-    private void calculateSlack(){
+    private void calculateSlack() {
+        int days = 0;
+        Task aux = myTask.unpluggedClone();
+
+        while(!aux.getDisplayEnd().equals(LFT)) {
+            aux.shift(new TimeDurationImpl(GPTimeUnitStack.DAY, 1));
+            days++;
+        }
+
+        slack = new TimeDurationImpl(GPTimeUnitStack.DAY, days);
+    }
+
+    /*
+    private void calculateSlack(){ // Isto nao tem em conta os feriados/fins de semana
        float slackie =  getLFT().getTime().getTime() - getEndDate().getTime().getTime();
 
        long slackInDays = (long) (slackie/(1000 * 60 * 60 * 24));
 
        this.slack = new TimeDurationImpl(GPTimeUnitStack.DAY, slackInDays);
     }
+     */
 
     TimeDuration getSlack(){
         return slack;
@@ -244,9 +256,13 @@ public class PertChartAbstraction {
         LFT = getEndDate();
         return;
       }
+
       Iterator<TaskGraphNode> it = successors.iterator();
       TaskGraphNode chosen = it.next();
-      while(it.hasNext()){
+      if (chosen.getLST() == null)
+          return;
+
+      while(it.hasNext()) {
           TaskGraphNode aux = it.next();
           if (aux.getLST() == null)
             return;
@@ -254,7 +270,12 @@ public class PertChartAbstraction {
             chosen = aux;
       }
 
-        LFT = chosen.getLST();
+      Task t = chosen.myTask.unpluggedClone();
+      t.setStart(CalendarFactory.createGanttCalendar(chosen.getLST().getTime()));
+      t.setEnd(CalendarFactory.createGanttCalendar(chosen.getLFT().getTime()));
+      t.shift(new TimeDurationImpl(GPTimeUnitStack.DAY, -1));
+
+      LFT = t.getStart();
     }
 
     GregorianCalendar getLFT(){
@@ -262,8 +283,8 @@ public class PertChartAbstraction {
     }
 
     private void calculateLateStart(){
-        Task auxTask = myTask.unpluggedClone();
-        auxTask.shift(getSlack());
+      Task auxTask = myTask.unpluggedClone();
+      auxTask.shift(getSlack());
 
       LST = auxTask.getStart();
     }
@@ -276,7 +297,7 @@ public class PertChartAbstraction {
         calculateLateFinish();
         if (LFT != null){
             calculateSlack();
-                calculateLateStart();
+            calculateLateStart();
         }
     }
 
