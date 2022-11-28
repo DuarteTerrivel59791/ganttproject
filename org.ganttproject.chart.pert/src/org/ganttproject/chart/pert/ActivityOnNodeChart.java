@@ -794,6 +794,7 @@ public class ActivityOnNodeChart extends PertChart {
       paintMe(g);
     }
 
+
     /**
      * Paints the graphical node.
      *

@@ -235,6 +235,7 @@ public class PertChartAbstraction {
         }
 
         slack = new TimeDurationImpl(GPTimeUnitStack.DAY, days);
+
     }
 
     /*
