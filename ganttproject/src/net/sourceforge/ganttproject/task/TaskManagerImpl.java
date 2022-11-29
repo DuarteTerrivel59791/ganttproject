@@ -72,17 +72,7 @@ import net.sourceforge.ganttproject.task.hierarchy.TaskHierarchyManagerImpl;
 import net.sourceforge.ganttproject.util.collect.Pair;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -142,12 +132,9 @@ public class TaskManagerImpl implements TaskManager {
   private static class TaskMap {
     private final Map<Integer, Task> myId2task = new HashMap<Integer, Task>();
     private TaskDocumentOrderComparator myComparator;
-    private boolean isModified1 = true;
-    private boolean isModified2 = true; //used in getTasksWithRestriction()
+    private boolean isModified = true;
     private Task[] myArray;
     private final TaskManagerImpl myManager;
-    private String currentRestriction;
-    private Task[] arrayTasksWithRest;
 
 
     TaskMap(TaskManagerImpl taskManager) {
@@ -157,8 +144,7 @@ public class TaskManagerImpl implements TaskManager {
 
     void addTask(Task task) {
       myId2task.put(new Integer(task.getTaskID()), task);
-      isModified1 = true;
-      isModified2 = true;
+      isModified = true;
     }
 
     Task getTask(int id) {
@@ -166,42 +152,29 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     public Task[] getTasks() {
-      if (isModified1) {
+      if (isModified) {
         myArray = myId2task.values().toArray(new Task[myId2task.size()]);
         Arrays.sort(myArray, myComparator);
-        isModified1 = false;
+        isModified = false;
       }
       return myArray;
     }
 
-    public Task[] getTasksWithRestriction(String restriction) {
-      int counter = 0;
+    public Set<Task> tasksToHide(Filter filter) {
+      Task [] allTasks = getTasks();
+      Set<Task> tasksToHide = new HashSet<>();
 
-      if (restriction == null) {
-        currentRestriction = null;
-        isModified2 = false;
-        return getTasks();
+      for (Task t: allTasks) {
+        if (!filter.taskWithinParameters(t))
+          tasksToHide.add(t);
       }
-      else {
-        if (isModified2 || currentRestriction != restriction) {
-          FilterClass filter = new FilterClass();
-          currentRestriction = restriction;
-          for (Task t: myId2task.values()) {
-            if (true) { //corresponder a restricao
-              arrayTasksWithRest[counter++] = t;
-            }
-          }
-          Arrays.sort(arrayTasksWithRest, myComparator);
-          isModified2 = false;
-        }
-        return arrayTasksWithRest;
-      }
+      return tasksToHide;
     }
 
     public void clear() {
       myId2task.clear();
-      isModified1 = true;
-      isModified2 = true;
+      isModified = true;
+
     }
 
     public void removeTask(Task task) {
@@ -210,8 +183,8 @@ public class TaskManagerImpl implements TaskManager {
       for (int i = 0; i < nestedTasks.length; i++) {
         removeTask(nestedTasks[i]);
       }
-      isModified1 = true;
-      isModified2 = true;
+      isModified = true;
+
     }
 
     public int size() {
@@ -223,8 +196,8 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     void setDirty() {
-      isModified1 = true;
-      isModified2 = true;
+      isModified = true;
+
     }
   }
 
@@ -236,6 +209,8 @@ public class TaskManagerImpl implements TaskManager {
 
   private Boolean isZeroMilestones = true;
 
+  private Filter currentFilter;
+
   TaskManagerImpl(TaskContainmentHierarchyFacade.Factory containmentFacadeFactory, TaskManagerConfig config) {
     myCustomPropertyListener = new CustomPropertyListenerImpl(this);
     myCustomColumnsManager = new CustomColumnsManager();
@@ -243,6 +218,7 @@ public class TaskManagerImpl implements TaskManager {
 
     myConfig = config;
     myHierarchyManager = new TaskHierarchyManagerImpl();
+    currentFilter = new FilterClass();
     EventDispatcher dispatcher = new EventDispatcher() {
       @Override
       public void fireDependencyAdded(TaskDependency dep) {
@@ -324,8 +300,13 @@ public class TaskManagerImpl implements TaskManager {
     return myTaskMap.getTasks();
   }
 
-  public Task[] getTasksWithRestriction(String restriction) {return myTaskMap.getTasksWithRestriction(restriction);}
+  public Set<Task> tasksToHide() {
+    return myTaskMap.tasksToHide(currentFilter);
+  }
 
+  public void setCurrentFilter(Filter f) {
+    currentFilter = f;
+  }
   private Task createRootTask() {
     Calendar c = CalendarFactory.newCalendar();
     Date today = c.getTime();

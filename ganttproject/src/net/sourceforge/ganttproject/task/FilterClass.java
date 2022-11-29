@@ -4,7 +4,7 @@ import biz.ganttproject.core.time.GanttCalendar;
 
 // Ideia: guardar várias variáveis, por exemplo, minDuration, maxDuration, etc
 // E depois ter um metodo que verifique se uma tarefa satisfaz todos os filtros (que nao estejam a null)
-public class FilterClass {
+public class FilterClass implements Filter{
 
     private int minLength;
     private int maxLength;
