@@ -21,7 +21,11 @@ package net.sourceforge.ganttproject.action.edit;
 import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.action.GPAction;
 import net.sourceforge.ganttproject.gui.UIFacade;
+<<<<<<< HEAD
 import net.sourceforge.ganttproject.gui.about.FilterDialog;
+=======
+import net.sourceforge.ganttproject.gui.filter.FilterDialog2;
+>>>>>>> origin/BRANCH_2_8_9
 import net.sourceforge.ganttproject.gui.options.SettingsDialog2;
 
 import java.awt.event.ActionEvent;
@@ -45,7 +49,14 @@ public class FilterAction extends GPAction {
         if (calledFromAppleScreenMenu(e)) {
             return;
         }
+<<<<<<< HEAD
         FilterDialog dialog = new FilterDialog(myUiFacade);
         dialog.show();
     }
 }
+=======
+        FilterDialog2 dialog = new FilterDialog2(myUiFacade);
+        dialog.show();
+    }
+}
+>>>>>>> origin/BRANCH_2_8_9

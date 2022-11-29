@@ -142,9 +142,13 @@ public class TaskManagerImpl implements TaskManager {
   private static class TaskMap {
     private final Map<Integer, Task> myId2task = new HashMap<Integer, Task>();
     private TaskDocumentOrderComparator myComparator;
-    private boolean isModified = true;
+    private boolean isModified1 = true;
+    private boolean isModified2 = true; //used in getTasksWithRestriction()
     private Task[] myArray;
     private final TaskManagerImpl myManager;
+    private String currentRestriction;
+    private Task[] arrayTasksWithRest;
+
 
     TaskMap(TaskManagerImpl taskManager) {
       myComparator = new TaskDocumentOrderComparator(taskManager);
@@ -153,7 +157,8 @@ public class TaskManagerImpl implements TaskManager {
 
     void addTask(Task task) {
       myId2task.put(new Integer(task.getTaskID()), task);
-      isModified = true;
+      isModified1 = true;
+      isModified2 = true;
     }
 
     Task getTask(int id) {
@@ -161,17 +166,42 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     public Task[] getTasks() {
-      if (isModified) {
+      if (isModified1) {
         myArray = myId2task.values().toArray(new Task[myId2task.size()]);
         Arrays.sort(myArray, myComparator);
-        isModified = false;
+        isModified1 = false;
       }
       return myArray;
     }
 
+    public Task[] getTasksWithRestriction(String restriction) {
+      int counter = 0;
+
+      if (restriction == null) {
+        currentRestriction = null;
+        isModified2 = false;
+        return getTasks();
+      }
+      else {
+        if (isModified2 || currentRestriction != restriction) {
+          FilterClass filter = new FilterClass(restriction);
+          currentRestriction = restriction;
+          for (Task t: myId2task.values()) {
+            if (true) { //corresponder a restricao
+              arrayTasksWithRest[counter++] = t;
+            }
+          }
+          Arrays.sort(arrayTasksWithRest, myComparator);
+          isModified2 = false;
+        }
+        return arrayTasksWithRest;
+      }
+    }
+
     public void clear() {
       myId2task.clear();
-      isModified = true;
+      isModified1 = true;
+      isModified2 = true;
     }
 
     public void removeTask(Task task) {
@@ -180,7 +210,8 @@ public class TaskManagerImpl implements TaskManager {
       for (int i = 0; i < nestedTasks.length; i++) {
         removeTask(nestedTasks[i]);
       }
-      isModified = true;
+      isModified1 = true;
+      isModified2 = true;
     }
 
     public int size() {
@@ -192,7 +223,8 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     void setDirty() {
-      isModified = true;
+      isModified1 = true;
+      isModified2 = true;
     }
   }
 
@@ -291,6 +323,8 @@ public class TaskManagerImpl implements TaskManager {
   public Task[] getTasks() {
     return myTaskMap.getTasks();
   }
+
+  public Task[] getTasksWithRestriction(String restriction) {return myTaskMap.getTasksWithRestriction(restriction);}
 
   private Task createRootTask() {
     Calendar c = CalendarFactory.newCalendar();

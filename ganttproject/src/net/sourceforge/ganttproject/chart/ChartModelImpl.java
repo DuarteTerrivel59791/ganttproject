@@ -26,10 +26,7 @@ import net.sourceforge.ganttproject.task.TaskActivity;
 import net.sourceforge.ganttproject.task.TaskContainmentHierarchyFacade;
 import net.sourceforge.ganttproject.task.TaskManager;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Controls painting of the Gantt chart
@@ -182,6 +179,10 @@ public class ChartModelImpl extends ChartModelBase {
 
   List<Task> getVisibleTasks() {
     return myVisibleTasks == null ? Collections.<Task> emptyList() : myVisibleTasks;
+  }
+
+  Set<Task> getHiddenTasks() {
+    return myHiddenTasks == null ? Collections.<Task> emptySet() : myHiddenTasks;
   }
 
   TaskContainmentHierarchyFacade getTaskContainment() {
