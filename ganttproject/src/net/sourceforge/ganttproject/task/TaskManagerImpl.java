@@ -184,7 +184,7 @@ public class TaskManagerImpl implements TaskManager {
       }
       else {
         if (isModified2 || currentRestriction != restriction) {
-          FilterClass filter = new FilterClass(restriction);
+          FilterClass filter = new FilterClass();
           currentRestriction = restriction;
           for (Task t: myId2task.values()) {
             if (true) { //corresponder a restricao

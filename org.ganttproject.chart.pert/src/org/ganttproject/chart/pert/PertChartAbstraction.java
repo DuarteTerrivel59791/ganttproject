@@ -141,7 +141,7 @@ public class PertChartAbstraction {
         GanttCalendar calendar = CalendarFactory.createGanttCalendar(myTaskManager.getProjectEnd());
         task.setStart(calendar);
         task.setEnd(calendar);
-        task.setName("Finished Messi");
+        task.setName("Finish");
         //task.shift(new TimeDurationImpl(GPTimeUnitStack.DAY, -1));
         TaskGraphNode dummy = new TaskGraphNode(task);
 
