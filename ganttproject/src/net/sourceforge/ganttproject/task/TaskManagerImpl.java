@@ -219,6 +219,7 @@ public class TaskManagerImpl implements TaskManager {
     myConfig = config;
     myHierarchyManager = new TaskHierarchyManagerImpl();
     currentFilter = new FilterClass();
+    //currentFilter.setMinLength(5);
     EventDispatcher dispatcher = new EventDispatcher() {
       @Override
       public void fireDependencyAdded(TaskDependency dep) {
@@ -307,6 +308,11 @@ public class TaskManagerImpl implements TaskManager {
   public void setCurrentFilter(Filter f) {
     currentFilter = f;
   }
+
+  public void resetFilter() {
+    currentFilter = new FilterClass();
+  }
+
   private Task createRootTask() {
     Calendar c = CalendarFactory.newCalendar();
     Date today = c.getTime();

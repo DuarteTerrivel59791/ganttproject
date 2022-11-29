@@ -154,6 +154,8 @@ public interface TaskManager {
 
   public void setCurrentFilter(Filter f);
 
+  public void resetFilter();
+
   public Set<Task> tasksToHide();
 
   public Task getRootTask();
