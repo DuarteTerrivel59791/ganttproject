@@ -187,7 +187,7 @@ public class TaskManagerImpl implements TaskManager {
           FilterClass filter = new FilterClass(restriction);
           currentRestriction = restriction;
           for (Task t: myId2task.values()) {
-            if () { //corresponder a restricao
+            if (true) { //corresponder a restricao
               arrayTasksWithRest[counter++] = t;
             }
           }

@@ -433,19 +433,22 @@ public class TaskRendererImpl2 extends ChartRendererBase {
 
   private void renderVisibleTasks(List<Task> visibleTasks, OffsetList defaultUnitOffsets) {
     List<Polygon> boundPolygons = Lists.newArrayList();
+    Set<Task> hiddenTasks = myModel.getHiddenTasks();
     int rowNum = 0;
     for (Task t : visibleTasks) {
-      boundPolygons.clear();
-      List<TaskActivity> activities = t.getActivities();
-      activities = splitOnViewportBounds(activities);
-      List<Polygon> rectangles = renderActivities(rowNum, t, activities, defaultUnitOffsets, true);
-      for (Polygon p : rectangles) {
-        if (p.getModelObject() != null) {
-          boundPolygons.add(p);
+      if (!hiddenTasks.contains(t)) {
+        boundPolygons.clear();
+        List<TaskActivity> activities = t.getActivities();
+        activities = splitOnViewportBounds(activities);
+        List<Polygon> rectangles = renderActivities(rowNum, t, activities, defaultUnitOffsets, true);
+        for (Polygon p : rectangles) {
+          if (p.getModelObject() != null) {
+            boundPolygons.add(p);
+          }
         }
+        renderLabels(boundPolygons);
+        renderBaseline(t, rowNum, defaultUnitOffsets);
       }
-      renderLabels(boundPolygons);
-      renderBaseline(t, rowNum, defaultUnitOffsets);
       rowNum++;
       Canvas.Line nextLine = getPrimitiveContainer().createLine(0, rowNum * getRowHeight(),
           (int) getChartModel().getBounds().getWidth(), rowNum * getRowHeight());
