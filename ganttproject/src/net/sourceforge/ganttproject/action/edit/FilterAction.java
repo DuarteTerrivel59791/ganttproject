@@ -70,16 +70,4 @@ public class FilterAction extends GPAction {
         return dialog.getDatePicker4();
     }
 
-    public void updateFilter() {
-        //usamos ao clicar no OK depois de inserir os dados do filtro
-        Filter f = new FilterClass();
-
-        if (getDatePicker1() != null) {}
-            //atualizar o f.set...
-        if (getDatePicker2() != null) {}
-
-        //...
-
-        myProject.getTaskManager().setCurrentFilter(f);
-    }
 }

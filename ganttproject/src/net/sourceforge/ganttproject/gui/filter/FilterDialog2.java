@@ -24,18 +24,14 @@ import net.sourceforge.ganttproject.action.GPAction;
 import net.sourceforge.ganttproject.gui.UIFacade;
 import net.sourceforge.ganttproject.gui.UIUtil;
 import net.sourceforge.ganttproject.language.GanttLanguage;
-import net.sourceforge.ganttproject.task.Task;
-import net.sourceforge.ganttproject.task.TaskManager;
-import net.sourceforge.ganttproject.task.TaskManagerImpl;
-import org.controlsfx.control.RangeSlider;
+import net.sourceforge.ganttproject.task.*;
 import org.jdesktop.swingx.JXDatePicker;
-import org.jdesktop.swingx.JXMultiThumbSlider;
-import org.jdesktop.swingx.multislider.DefaultMultiThumbModel;
-import org.jdesktop.swingx.multislider.MultiThumbModel;
+
 
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
 
 
@@ -171,6 +167,13 @@ public class FilterDialog2 {
 
         result.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
 
+        okbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //updateFilter();
+            }
+        });
+
     }
 
     private static String i18n(String key) {
@@ -209,4 +212,16 @@ public class FilterDialog2 {
         return Task.Priority.getPriority(2);
     }
 
+    public void updateFilter() {
+        //usamos ao clicar no OK depois de inserir os dados do filtro
+        Filter f = new FilterClass();
+
+        if (getDatePicker1() != null) {}
+        //atualizar o f.set...
+        if (getDatePicker2() != null) {}
+
+        //...
+
+        taskManager.setCurrentFilter(f);
+    }
 }
