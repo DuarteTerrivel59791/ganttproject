@@ -46,6 +46,6 @@ public class FilterAction extends GPAction {
             return;
         }
         FilterDialog2 dialog = new FilterDialog2(myUiFacade);
-        dialog.show();
+        dialog.filterPage();
     }
 }
