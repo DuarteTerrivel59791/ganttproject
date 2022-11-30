@@ -20,19 +20,24 @@ package net.sourceforge.ganttproject.gui.filter;
 import javax.swing.*;
 
 import net.sourceforge.ganttproject.IGanttProject;
+import net.sourceforge.ganttproject.action.GPAction;
 import net.sourceforge.ganttproject.gui.UIFacade;
 import net.sourceforge.ganttproject.gui.UIUtil;
 import net.sourceforge.ganttproject.language.GanttLanguage;
 import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 import net.sourceforge.ganttproject.task.TaskManagerImpl;
+import org.controlsfx.control.RangeSlider;
 import org.jdesktop.swingx.JXDatePicker;
 import org.jdesktop.swingx.JXMultiThumbSlider;
+import org.jdesktop.swingx.multislider.DefaultMultiThumbModel;
+import org.jdesktop.swingx.multislider.MultiThumbModel;
+
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
 import java.util.Date;
-import java.util.List;
+
 
 public class FilterDialog2 {
 
@@ -146,14 +151,17 @@ public class FilterDialog2 {
         result.add(progressTitle);
 
         progressTitle.setFont(fn);
-        /*
-        JXMultiThumbSlider<Color> progress = new JXMultiThumbSlider<>();
-        progress.setBounds(190, 240, 230, 100);
-        progress.setMinimumValue(0);
-        progress.setMaximumValue(100);
-        progress.setVisible(true);
+
+        /*MultiThumbModel<Integer> model = new DefaultMultiThumbModel<>();
+        JXMultiThumbSlider<Integer> progress = new JXMultiThumbSlider<>();
+        progress.setModel(model);
+        progress.setBounds(200, 240, 230, 25);*/
+
+        SpinnerModel model = new SpinnerNumberModel(0, 0, 100, 1);
+        JSpinner progress = new JSpinner(model);
+        progress.setBounds(200, 240, 230,25);
         result.add(progress);
-        */
+
 
         frame.setTitle("Filter");
         frame.setVisible(true);
