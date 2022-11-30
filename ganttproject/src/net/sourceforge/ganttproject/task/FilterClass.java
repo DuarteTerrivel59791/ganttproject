@@ -7,6 +7,7 @@ import biz.ganttproject.core.time.GanttCalendar;
 public class FilterClass implements Filter{
 
     private int minLength;
+
     private int maxLength;
 
     private Task.Priority minPriority;
