@@ -25,6 +25,7 @@ import net.sourceforge.ganttproject.gui.filter.FilterDialog2;
 import net.sourceforge.ganttproject.gui.options.SettingsDialog2;
 
 import java.awt.event.ActionEvent;
+import java.util.Date;
 
 /**
  * Action to show the options dialog for the application. It will seach and show
@@ -33,6 +34,8 @@ import java.awt.event.ActionEvent;
 public class FilterAction extends GPAction {
     private final UIFacade myUiFacade;
     private final IGanttProject myProject;
+
+    private FilterDialog2 dialog;
 
     public FilterAction(IGanttProject project, UIFacade uiFacade) {
         super("filter.app");
@@ -45,7 +48,23 @@ public class FilterAction extends GPAction {
         if (calledFromAppleScreenMenu(e)) {
             return;
         }
-        FilterDialog2 dialog = new FilterDialog2(myUiFacade);
+        dialog = new FilterDialog2(myUiFacade);
         dialog.filterPage();
+    }
+
+    public Date getDatePicker1(){
+        return dialog.getDatePicker1();
+    }
+
+    public Date getDatePicker2(){
+        return dialog.getDatePicker2();
+    }
+
+    public Date getDatePicker3(){
+        return dialog.getDatePicker3();
+    }
+
+    public Date getDatePicker4(){
+        return dialog.getDatePicker4();
     }
 }

@@ -25,10 +25,15 @@ import net.sourceforge.ganttproject.language.GanttLanguage;
 import org.jdesktop.swingx.JXDatePicker;
 
 import java.awt.*;
+import java.util.Date;
 
 public class FilterDialog2 {
 
     UIFacade uiFacade;
+    JXDatePicker datePicker1;
+    JXDatePicker datePicker2;
+    JXDatePicker datePicker3;
+    JXDatePicker datePicker4;
 
     public FilterDialog2(UIFacade uiFacade) {
         this.uiFacade = uiFacade;
@@ -43,19 +48,19 @@ public class FilterDialog2 {
         frame.add(result);
         result.setLayout(null);
 
-        JXDatePicker datePicker1 = UIUtil.createDatePicker();
+        datePicker1 = UIUtil.createDatePicker();
         datePicker1.setBounds(300, 20, 200, 20);
         result.add(datePicker1);
 
-        JXDatePicker datePicker2 = UIUtil.createDatePicker();
+        datePicker2 = UIUtil.createDatePicker();
         datePicker2.setBounds(700, 20, 200, 20);
         result.add(datePicker2);
 
-        JXDatePicker datePicker3 = UIUtil.createDatePicker();
+        datePicker3 = UIUtil.createDatePicker();
         datePicker3.setBounds(300, 50, 200, 20);
         result.add(datePicker3);
 
-        JXDatePicker datePicker4 = UIUtil.createDatePicker();
+        datePicker4 = UIUtil.createDatePicker();
         datePicker4.setBounds(700, 50, 200, 20);
         result.add(datePicker4);
 
@@ -94,6 +99,19 @@ public class FilterDialog2 {
 
     private static String i18n(String key) {
         return GanttLanguage.getInstance().getText(key);
+    }
+
+    public Date getDatePicker1(){
+        return datePicker1.getDate();
+    }
+    public Date getDatePicker2(){
+        return datePicker1.getDate();
+    }
+    public Date getDatePicker3(){
+        return datePicker1.getDate();
+    }
+    public Date getDatePicker4(){
+        return datePicker1.getDate();
     }
 
 }
