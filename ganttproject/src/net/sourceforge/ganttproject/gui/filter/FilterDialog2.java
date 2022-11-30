@@ -22,10 +22,13 @@ import javax.swing.*;
 import net.sourceforge.ganttproject.gui.UIFacade;
 import net.sourceforge.ganttproject.gui.UIUtil;
 import net.sourceforge.ganttproject.language.GanttLanguage;
+import net.sourceforge.ganttproject.task.Task;
 import org.jdesktop.swingx.JXDatePicker;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class FilterDialog2 {
 
@@ -34,6 +37,8 @@ public class FilterDialog2 {
     JXDatePicker datePicker2;
     JXDatePicker datePicker3;
     JXDatePicker datePicker4;
+
+    JComboBox<String> prioritySelection;
 
     public FilterDialog2(UIFacade uiFacade) {
         this.uiFacade = uiFacade;
@@ -87,6 +92,12 @@ public class FilterDialog2 {
         Font fn = new Font("Arial", Font.PLAIN, 20);
         titleDate.setFont(fn);
 
+        String[] priorities= {"Menor", "Baixo", "Normal", "Alto", "Maior"};
+        prioritySelection = new JComboBox<>(priorities);
+        prioritySelection.setBounds(190,80,230,25);
+        result.add(prioritySelection);
+
+
         frame.setTitle("Filter");
         frame.setVisible(true);
         frame.setLocation(0,0);
@@ -94,6 +105,7 @@ public class FilterDialog2 {
 
 
         result.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
+
 
     }
 
@@ -112,6 +124,25 @@ public class FilterDialog2 {
     }
     public Date getDatePicker4(){
         return datePicker1.getDate();
+    }
+
+    public Task.Priority getPriority(){
+        if (prioritySelection.getPrototypeDisplayValue() == "Menor"){
+            return Task.Priority.getPriority(0);
+        }
+        if (prioritySelection.getPrototypeDisplayValue() == "Baixo"){
+            return Task.Priority.getPriority(1);
+        }
+        if (prioritySelection.getPrototypeDisplayValue() == "Normal"){
+            return Task.Priority.getPriority(2);
+        }
+        if (prioritySelection.getPrototypeDisplayValue() == "Alto"){
+            return Task.Priority.getPriority(3);
+        }
+        if (prioritySelection.getPrototypeDisplayValue() == "Maior"){
+            return Task.Priority.getPriority(4);
+        }
+        return Task.Priority.getPriority(2);
     }
 
 }
