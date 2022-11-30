@@ -36,7 +36,8 @@ import java.util.List;
 public interface Task extends MutableTask {
   /** Available task priorities */
   public enum Priority {
-    LOWEST("3"), LOW("0"), NORMAL("1"), HIGH("2"), HIGHEST("4");
+    LOWEST("0"), LOW("1"), NORMAL("2"), HIGH("3"), HIGHEST("4");
+    //LOWEST("3"), LOW("0"), NORMAL("1"), HIGH("2"), HIGHEST("4");
 
     private final String myPersistentValue;
 
