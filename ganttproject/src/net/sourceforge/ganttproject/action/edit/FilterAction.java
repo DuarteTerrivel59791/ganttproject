@@ -56,7 +56,7 @@ public class FilterAction extends GPAction {
 }
 =======
         FilterDialog2 dialog = new FilterDialog2(myUiFacade);
-        dialog.show();
+        dialog.filterPage();
     }
 }
 >>>>>>> origin/BRANCH_2_8_9

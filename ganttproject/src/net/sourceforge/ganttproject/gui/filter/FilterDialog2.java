@@ -17,149 +17,83 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package net.sourceforge.ganttproject.gui.filter;
+import javax.swing.*;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
-
-import net.sourceforge.ganttproject.GPVersion;
-import net.sourceforge.ganttproject.gui.AbstractPagesDialog;
-import net.sourceforge.ganttproject.gui.NotificationManager;
 import net.sourceforge.ganttproject.gui.UIFacade;
-import net.sourceforge.ganttproject.gui.options.TopPanel;
+import net.sourceforge.ganttproject.gui.UIUtil;
 import net.sourceforge.ganttproject.language.GanttLanguage;
+import org.jdesktop.swingx.JXDatePicker;
 
-public class FilterDialog2 extends AbstractPagesDialog {
+import java.awt.*;
 
-    private static final Color HTML_BACKGROUND = new JPanel().getBackground();
+public class FilterDialog2 {
+
+    UIFacade uiFacade;
 
     public FilterDialog2(UIFacade uiFacade) {
-        super("filter.app", uiFacade, createPages());
+        this.uiFacade = uiFacade;
     }
 
-    private static List<ListItem> createPages() {
-        List<ListItem> result = new ArrayList<AbstractPagesDialog.ListItem>();
-        result.add(filterPage());
-        return result;
-    }
 
-    private static ListItem filterPage() {
-        JPanel result = new JPanel(new BorderLayout());
-        Box filterBox = Box.createVerticalBox();
+    public void filterPage() {
 
-        {
-            JEditorPane html = createHtml(GanttLanguage.getInstance().formatText("about.summary", GPVersion.CURRENT));
-            html.setAlignmentX(0.5f);
-            filterBox.add(html);
-            filterBox.add(Box.createVerticalStrut(20));
-        }
+        JFrame frame = new JFrame();
+        JPanel result = new JPanel();
+        frame.setSize(1000, 600);
+        frame.add(result);
+        result.setLayout(null);
 
-        result.add(filterBox, BorderLayout.NORTH);
+        JXDatePicker datePicker1 = UIUtil.createDatePicker();
+        datePicker1.setBounds(300, 20, 200, 20);
+        result.add(datePicker1);
 
-        JLabel icon = new JLabel(new ImageIcon(FilterDialog2.class.getResource("/icons/ganttproject.png")));
-        icon.setAlignmentX(0.5f);
-        JPanel iconWrapper = new JPanel(new BorderLayout());
-        iconWrapper.add(icon, BorderLayout.NORTH);
-        result.add(iconWrapper, BorderLayout.CENTER);
+        JXDatePicker datePicker2 = UIUtil.createDatePicker();
+        datePicker2.setBounds(700, 20, 200, 20);
+        result.add(datePicker2);
+
+        JXDatePicker datePicker3 = UIUtil.createDatePicker();
+        datePicker3.setBounds(300, 50, 200, 20);
+        result.add(datePicker3);
+
+        JXDatePicker datePicker4 = UIUtil.createDatePicker();
+        datePicker4.setBounds(700, 50, 200, 20);
+        result.add(datePicker4);
+
+        JLabel titleDate = new JLabel("Choose Dates: ");
+        titleDate.setBounds(10,30,230,25);
+        result.add(titleDate);
+
+        JLabel initDate1 = new JLabel("Choose Initial Date: ");
+        initDate1.setBounds(190,17,230,25);
+        result.add(initDate1);
+
+        JLabel endDate1 = new JLabel("Choose End Date: ");
+        endDate1.setBounds(600,17,230,25);
+        result.add(endDate1);
+
+        JLabel initDate2 = new JLabel("Choose Initial Date: ");
+        initDate2.setBounds(190,47,230,25);
+        result.add(initDate2);
+
+        JLabel endDate2 = new JLabel("Choose End Date: ");
+        endDate2.setBounds(600,47,230,25);
+        result.add(endDate2);
+
+        Font fn = new Font("Arial", Font.PLAIN, 20);
+        titleDate.setFont(fn);
+
+        frame.setTitle("Filter");
+        frame.setVisible(true);
+        frame.setLocation(0,0);
+        frame.setLocation(600, 250);
+
 
         result.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
-        return new ListItem(false, "filter.app", i18n("filter.app"), result);
-    }
 
-    private static ListItem createSummaryPage() {
-        JPanel result = new JPanel(new BorderLayout());
-        Box htmlBox = Box.createVerticalBox();
-        {
-            JEditorPane html = createHtml(GanttLanguage.getInstance().formatText("about.summary", GPVersion.CURRENT));
-            html.setAlignmentX(0.5f);
-            htmlBox.add(html);
-            htmlBox.add(Box.createVerticalStrut(20));
-        }
-        {
-            JEditorPane html = createHtml(GanttLanguage.getInstance().formatText("about.authors.short", "http://ganttproject.biz/about"));
-            html.setAlignmentX(0.5f);
-            htmlBox.add(html);
-            htmlBox.add(Box.createVerticalStrut(20));
-        }
-        result.add(htmlBox, BorderLayout.NORTH);
-
-        JLabel icon = new JLabel(new ImageIcon(FilterDialog2.class.getResource("/icons/ganttproject.png")));
-        icon.setAlignmentX(0.5f);
-        JPanel iconWrapper = new JPanel(new BorderLayout());
-        iconWrapper.add(icon, BorderLayout.NORTH);
-        result.add(iconWrapper, BorderLayout.CENTER);
-
-        result.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
-        return new ListItem(false, "summary", i18n("summary"), result);
-    }
-
-    private static ListItem createTranslationsPage() {
-        StringBuilder builder = new StringBuilder();
-        for (Locale l : GanttLanguage.getInstance().getAvailableLocales()) {
-            String language = GanttLanguage.getInstance().formatLanguageAndCountry(l);
-            String translatorsKey = "about.translations."
-                    + (Strings.isNullOrEmpty(l.getCountry()) ? l.getLanguage() : l.getLanguage() + "_" + l.getCountry());
-            String translators = GanttLanguage.getInstance().getText(translatorsKey);
-            if (translators == null) {
-                continue;
-            }
-            builder.append(GanttLanguage.getInstance().formatText("about.translations.entry", language, translators));
-        }
-        return createHtmlPage("translations", i18n("translations"), GanttLanguage.getInstance().formatText("about.translations", builder.toString()));
-    }
-
-    private static ListItem createHtmlPage(String key) {
-        return createHtmlPage(key, i18n(key), i18n("about." + key));
-    }
-
-    private static ListItem createHtmlPage(String key, String title, String body) {
-        JPanel result = new JPanel(new BorderLayout());
-        JComponent topPanel = TopPanel.create(title, null);
-        topPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        result.add(topPanel, BorderLayout.NORTH);
-
-        JPanel planePageWrapper = new JPanel(new BorderLayout());
-        planePageWrapper.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-        JComponent planePage = createHtml(body);
-        planePage.setAlignmentX(Component.LEFT_ALIGNMENT);
-        planePageWrapper.add(planePage, BorderLayout.NORTH);
-        result.add(planePageWrapper, BorderLayout.CENTER);
-
-        return new ListItem(false, key, title, result);
-    }
-
-    private static JEditorPane createHtml(String html) {
-        JEditorPane htmlPane = new JEditorPane("text/html", html);
-        htmlPane.setEditable(false);
-        htmlPane.setBackground(HTML_BACKGROUND);
-        htmlPane.addHyperlinkListener(NotificationManager.DEFAULT_HYPERLINK_LISTENER);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        htmlPane.setSize(new Dimension(screenSize.width / 3, Integer.MAX_VALUE));
-        return htmlPane;
     }
 
     private static String i18n(String key) {
         return GanttLanguage.getInstance().getText(key);
     }
 
-    @Override
-    protected void onOk() {
-    }
 }

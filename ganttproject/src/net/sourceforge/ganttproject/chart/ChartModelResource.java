@@ -33,6 +33,7 @@ import net.sourceforge.ganttproject.task.TaskManager;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ChartModelResource extends ChartModelBase {
 
@@ -174,4 +175,6 @@ public class ChartModelResource extends ChartModelBase {
   public int calculateRowHeight() {
     return Math.max(getChartUIConfiguration().getRowHeight(), getProjectConfig().getAppFontSize().get());
   }
+
+  public void setExplicitlyHiddenTasks(Set<Task> hiddenTasks) {}
 }

@@ -30,6 +30,7 @@ import net.sourceforge.ganttproject.task.TaskManager;
 import java.awt.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author dbarashev
@@ -90,4 +91,6 @@ public interface ChartModel {
   TimeUnitStack getTimeUnitStack();
 
   OptionEventDispatcher getOptionEventDispatcher();
+
+  void setExplicitlyHiddenTasks(Set<Task> hiddenTasks);
 }

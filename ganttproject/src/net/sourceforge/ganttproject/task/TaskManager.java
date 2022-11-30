@@ -42,6 +42,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author bard
@@ -150,6 +151,12 @@ public interface TaskManager {
   public TaskBuilder newTaskBuilder();
 
   Task[] getTasks();
+
+  public void setCurrentFilter(Filter f);
+
+  public void resetFilter();
+
+  public Set<Task> tasksToHide();
 
   public Task getRootTask();
 

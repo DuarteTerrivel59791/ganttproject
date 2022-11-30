@@ -44,6 +44,7 @@ public class EditMenu extends JMenu {
     addSeparator();
     add(new RefreshViewAction(uiFacade));
     add(new SearchDialogAction(searchUi));
+    add(new FilterAction(project, uiFacade));
     addSeparator();
     add(viewManager.getCutAction());
     add(viewManager.getCopyAction());
