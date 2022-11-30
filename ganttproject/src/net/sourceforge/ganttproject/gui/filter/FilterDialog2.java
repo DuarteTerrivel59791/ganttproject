@@ -19,11 +19,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package net.sourceforge.ganttproject.gui.filter;
 import javax.swing.*;
 
+import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.gui.UIFacade;
 import net.sourceforge.ganttproject.gui.UIUtil;
 import net.sourceforge.ganttproject.language.GanttLanguage;
 import net.sourceforge.ganttproject.task.Task;
+import net.sourceforge.ganttproject.task.TaskManager;
+import net.sourceforge.ganttproject.task.TaskManagerImpl;
 import org.jdesktop.swingx.JXDatePicker;
+import org.jdesktop.swingx.JXMultiThumbSlider;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -40,8 +44,12 @@ public class FilterDialog2 {
 
     JComboBox<String> prioritySelection;
 
-    public FilterDialog2(UIFacade uiFacade) {
+    private TaskManager taskManager;
+
+    public FilterDialog2(UIFacade uiFacade, TaskManager taskManager) {
+
         this.uiFacade = uiFacade;
+        this.taskManager = taskManager;
     }
 
 
@@ -92,11 +100,60 @@ public class FilterDialog2 {
         Font fn = new Font("Arial", Font.PLAIN, 20);
         titleDate.setFont(fn);
 
+        JLabel titlePriority = new JLabel("Choose Priority: ");
+        titlePriority.setBounds(10,100,230,25);
+        result.add(titlePriority);
+
+        titlePriority.setFont(fn);
+
+        JLabel titleDuration = new JLabel("Choose Duration: ");
+        titleDuration.setBounds(10,170,230,25);
+        result.add(titleDuration);
+
+        titleDuration.setFont(fn);
+
         String[] priorities= {"Menor", "Baixo", "Normal", "Alto", "Maior"};
         prioritySelection = new JComboBox<>(priorities);
-        prioritySelection.setBounds(190,80,230,25);
+        prioritySelection.setBounds(190,100,230,25);
         result.add(prioritySelection);
 
+        JButton okbutton = new JButton("OK");
+        okbutton.setBounds(880, 500, 60, 20);
+        result.add(okbutton);
+
+        JButton resetbutton = new JButton("Reset");
+        resetbutton.setBounds(800, 500, 60, 20);
+        result.add(resetbutton);
+
+        JTextField mindurationbox = new JTextField();
+        mindurationbox.setBounds(300,170, 230, 25);
+        result.add(mindurationbox);
+
+        JTextField maxdurationbox = new JTextField();
+        maxdurationbox.setBounds(700,170, 230, 25);
+        result.add(maxdurationbox);
+
+        JLabel minduration = new JLabel("Min Duration: ");
+        minduration.setBounds(190,170,230,25);
+        result.add(minduration);
+
+        JLabel maxduration = new JLabel("Max Duration: ");
+        maxduration.setBounds(600,170,230,25);
+        result.add(maxduration);
+
+        JLabel progressTitle = new JLabel("Choose Progress: ");
+        progressTitle.setBounds(10,240,230,25);
+        result.add(progressTitle);
+
+        progressTitle.setFont(fn);
+        /*
+        JXMultiThumbSlider<Color> progress = new JXMultiThumbSlider<>();
+        progress.setBounds(190, 240, 230, 100);
+        progress.setMinimumValue(0);
+        progress.setMaximumValue(100);
+        progress.setVisible(true);
+        result.add(progress);
+        */
 
         frame.setTitle("Filter");
         frame.setVisible(true);

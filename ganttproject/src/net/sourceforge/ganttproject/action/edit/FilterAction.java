@@ -48,7 +48,7 @@ public class FilterAction extends GPAction {
         if (calledFromAppleScreenMenu(e)) {
             return;
         }
-        dialog = new FilterDialog2(myUiFacade);
+        dialog = new FilterDialog2(myUiFacade, myProject.getTaskManager());
         dialog.filterPage();
     }
 
