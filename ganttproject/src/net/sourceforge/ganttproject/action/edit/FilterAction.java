@@ -23,6 +23,8 @@ import net.sourceforge.ganttproject.action.GPAction;
 import net.sourceforge.ganttproject.gui.UIFacade;
 import net.sourceforge.ganttproject.gui.filter.FilterDialog2;
 import net.sourceforge.ganttproject.gui.options.SettingsDialog2;
+import net.sourceforge.ganttproject.task.Filter;
+import net.sourceforge.ganttproject.task.FilterClass;
 
 import java.awt.event.ActionEvent;
 import java.util.Date;
@@ -66,5 +68,18 @@ public class FilterAction extends GPAction {
 
     public Date getDatePicker4(){
         return dialog.getDatePicker4();
+    }
+
+    public void updateFilter() {
+        //usamos ao clicar no OK depois de inserir os dados do filtro
+        Filter f = new FilterClass();
+
+        if (getDatePicker1() != null) {}
+            //atualizar o f.set...
+        if (getDatePicker2() != null) {}
+
+        //...
+
+        myProject.getTaskManager().setCurrentFilter(f);
     }
 }

@@ -334,6 +334,8 @@ public abstract class GPAction extends AbstractAction implements GanttLanguage.L
     return (String) ourKeyboardProperties.get(keystrokeID);
   }
 
+  public void updateFilter() {}
+
   public static GPAction createVoidAction(String key) {
     return new GPAction(key) {
       @Override
