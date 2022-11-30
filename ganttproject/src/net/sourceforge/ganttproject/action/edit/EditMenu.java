@@ -32,6 +32,7 @@ import net.sourceforge.ganttproject.undo.GPUndoManager;
 public class EditMenu extends JMenu {
   private final UndoAction myUndoAction;
   private final RedoAction myRedoAction;
+  private FilterAction filterAction;
 
   public EditMenu(IGanttProject project, UIFacade uiFacade, GPViewManager viewManager, SearchUi searchUi, String key) {
     super(GPAction.createVoidAction(key));
@@ -68,4 +69,5 @@ public class EditMenu extends JMenu {
   public GPAction getRedoAction() {
     return myRedoAction;
   }
+
 }
