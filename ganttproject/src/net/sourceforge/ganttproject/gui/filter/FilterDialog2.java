@@ -171,7 +171,6 @@ public class FilterDialog2 {
 
         result.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
 
-
     }
 
     private static String i18n(String key) {
