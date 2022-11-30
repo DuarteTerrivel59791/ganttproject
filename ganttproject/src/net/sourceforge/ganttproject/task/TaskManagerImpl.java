@@ -306,6 +306,7 @@ public class TaskManagerImpl implements TaskManager {
   }
 
   public void setCurrentFilter(Filter f) {
+
     currentFilter = f;
   }
 
