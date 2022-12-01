@@ -306,12 +306,15 @@ public class TaskManagerImpl implements TaskManager {
   }
 
   public void setCurrentFilter(Filter f) {
-
     currentFilter = f;
   }
 
   public void resetFilter() {
     currentFilter = new FilterClass();
+  }
+
+  public Filter getCurrentFilter(){
+    return currentFilter;
   }
 
   private Task createRootTask() {

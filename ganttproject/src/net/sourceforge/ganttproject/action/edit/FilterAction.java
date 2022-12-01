@@ -54,20 +54,4 @@ public class FilterAction extends GPAction {
         dialog.filterPage();
     }
 
-    public Date getDatePicker1(){
-        return dialog.getDatePicker1();
-    }
-
-    public Date getDatePicker2(){
-        return dialog.getDatePicker2();
-    }
-
-    public Date getDatePicker3(){
-        return dialog.getDatePicker3();
-    }
-
-    public Date getDatePicker4(){
-        return dialog.getDatePicker4();
-    }
-
 }

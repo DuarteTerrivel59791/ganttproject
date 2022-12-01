@@ -44,4 +44,24 @@ public interface Filter {
     public boolean hasMaxEndDate();
 
     public boolean taskWithinParameters(Task t);
+
+    public int getMinLength();
+
+    public int getMaxLength();
+
+    public Task.Priority getMinPriority();
+
+    public Task.Priority getMaxPriority();
+
+    public int getMinCompletion();
+
+    public int getMaxCompletion();
+
+    public GanttCalendar getMinStartDate();
+
+    public GanttCalendar getMaxStartDate();
+
+    public GanttCalendar getMinEndDate();
+
+    public GanttCalendar getMaxEndDate();
 }

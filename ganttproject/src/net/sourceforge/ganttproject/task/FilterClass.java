@@ -119,6 +119,7 @@ public class FilterClass implements Filter{
         return maxEndDate != null;
     }
 
+    //TODO: Fazer datas inclusivas
     public boolean taskWithinParameters(Task t) {
         return !( (hasMinLength() && t.getDuration().getLength() < minLength)
         || (hasMaxLength() && t.getDuration().getLength() > maxLength)
@@ -132,4 +133,43 @@ public class FilterClass implements Filter{
         || (hasMaxEndDate()) && t.getEnd().after(maxEndDate) );
     }
 
+    public int getMinLength() {
+        return minLength;
+    }
+
+    public int getMaxLength() {
+        return maxLength;
+    }
+
+    public Task.Priority getMinPriority() {
+        return minPriority;
+    }
+
+    public Task.Priority getMaxPriority() {
+        return maxPriority;
+    }
+
+    public int getMinCompletion() {
+        return minCompletion;
+    }
+
+    public int getMaxCompletion() {
+        return maxCompletion;
+    }
+
+    public GanttCalendar getMinStartDate() {
+        return minStartDate;
+    }
+
+    public GanttCalendar getMaxStartDate() {
+        return maxStartDate;
+    }
+
+    public GanttCalendar getMinEndDate() {
+        return minEndDate;
+    }
+
+    public GanttCalendar getMaxEndDate() {
+        return maxEndDate;
+    }
 }

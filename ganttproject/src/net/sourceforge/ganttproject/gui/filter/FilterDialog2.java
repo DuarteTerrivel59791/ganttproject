@@ -19,44 +19,49 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package net.sourceforge.ganttproject.gui.filter;
 import javax.swing.*;
 
-import net.sourceforge.ganttproject.IGanttProject;
-import net.sourceforge.ganttproject.action.GPAction;
+import biz.ganttproject.core.time.CalendarFactory;
 import net.sourceforge.ganttproject.gui.UIFacade;
 import net.sourceforge.ganttproject.gui.UIUtil;
 import net.sourceforge.ganttproject.language.GanttLanguage;
 import net.sourceforge.ganttproject.task.*;
 import org.jdesktop.swingx.JXDatePicker;
 
-
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 
-
 public class FilterDialog2 {
 
     UIFacade uiFacade;
+
+    Filter f;
     JXDatePicker datePicker1;
     JXDatePicker datePicker2;
     JXDatePicker datePicker3;
     JXDatePicker datePicker4;
 
-    JComboBox<String> prioritySelection;
+    JComboBox<String> minPrioritySelection;
+    JComboBox<String> maxPrioritySelection;
+
+    JTextField minDurationBox;
+    JTextField maxDurationBox;
+
+    JSpinner minProgress;
+    JSpinner maxProgress;
 
     private TaskManager taskManager;
 
     public FilterDialog2(UIFacade uiFacade, TaskManager taskManager) {
-
         this.uiFacade = uiFacade;
         this.taskManager = taskManager;
+        f = taskManager.getCurrentFilter();
     }
 
 
     public void filterPage() {
 
-        JFrame frame = new JFrame();
+        final JFrame frame = new JFrame();
         JPanel result = new JPanel();
         frame.setSize(1000, 600);
         frame.add(result);
@@ -113,10 +118,14 @@ public class FilterDialog2 {
 
         titleDuration.setFont(fn);
 
-        String[] priorities= {"Menor", "Baixo", "Normal", "Alto", "Maior"};
-        prioritySelection = new JComboBox<>(priorities);
-        prioritySelection.setBounds(190,100,230,25);
-        result.add(prioritySelection);
+        String[] priorities= {"", "Menor", "Baixo", "Normal", "Alto", "Maior"};
+        minPrioritySelection = new JComboBox<>(priorities);
+        minPrioritySelection.setBounds(190,100,230,25);
+        result.add(minPrioritySelection);
+
+        maxPrioritySelection = new JComboBox<>(priorities);
+        maxPrioritySelection.setBounds(500,100,230,25);
+        result.add(maxPrioritySelection);
 
         JButton okbutton = new JButton("OK");
         okbutton.setBounds(880, 500, 60, 20);
@@ -126,21 +135,21 @@ public class FilterDialog2 {
         resetbutton.setBounds(800, 500, 60, 20);
         result.add(resetbutton);
 
-        JTextField mindurationbox = new JTextField();
-        mindurationbox.setBounds(300,170, 230, 25);
-        result.add(mindurationbox);
+        minDurationBox = new JTextField();
+        minDurationBox.setBounds(300,170, 230, 25);
+        result.add(minDurationBox);
 
-        JTextField maxdurationbox = new JTextField();
-        maxdurationbox.setBounds(700,170, 230, 25);
-        result.add(maxdurationbox);
+        maxDurationBox = new JTextField();
+        maxDurationBox.setBounds(700,170, 230, 25);
+        result.add(maxDurationBox);
 
-        JLabel minduration = new JLabel("Min Duration: ");
-        minduration.setBounds(190,170,230,25);
-        result.add(minduration);
+        JLabel minDuration = new JLabel("Min Duration: ");
+        minDuration.setBounds(190,170,230,25);
+        result.add(minDuration);
 
-        JLabel maxduration = new JLabel("Max Duration: ");
-        maxduration.setBounds(600,170,230,25);
-        result.add(maxduration);
+        JLabel maxDuration = new JLabel("Max Duration: ");
+        maxDuration.setBounds(600,170,230,25);
+        result.add(maxDuration);
 
         JLabel progressTitle = new JLabel("Choose Progress: ");
         progressTitle.setBounds(10,240,230,25);
@@ -148,16 +157,17 @@ public class FilterDialog2 {
 
         progressTitle.setFont(fn);
 
-        /*MultiThumbModel<Integer> model = new DefaultMultiThumbModel<>();
-        JXMultiThumbSlider<Integer> progress = new JXMultiThumbSlider<>();
-        progress.setModel(model);
-        progress.setBounds(200, 240, 230, 25);*/
+        SpinnerModel minModel = new SpinnerNumberModel(0, 0, 100, 1);
+        minProgress = new JSpinner(minModel);
+        minProgress.setBounds(200, 240, 230,25);
+        result.add(minProgress);
 
-        SpinnerModel model = new SpinnerNumberModel(0, 0, 100, 1);
-        JSpinner progress = new JSpinner(model);
-        progress.setBounds(200, 240, 230,25);
-        result.add(progress);
+        SpinnerModel maxModel = new SpinnerNumberModel(100, 0, 100, 1);
+        maxProgress = new JSpinner(maxModel);
+        maxProgress.setBounds(500, 240, 230,25);
+        result.add(maxProgress);
 
+        refreshValues();
 
         frame.setTitle("Filter");
         frame.setVisible(true);
@@ -167,12 +177,56 @@ public class FilterDialog2 {
 
         result.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
 
+        resetbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                taskManager.resetFilter();
+                resetValues();
+            }
+        });
         okbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //updateFilter();
+                updateFilter();
+                frame.dispose();
             }
         });
+    }
+
+    private void resetValues(){
+        datePicker1.setDate(null);
+        datePicker2.setDate(null);
+        datePicker3.setDate(null);
+        datePicker4.setDate(null);
+        minPrioritySelection.setSelectedIndex(0);
+        maxPrioritySelection.setSelectedIndex(0);
+        minDurationBox.setText("");
+        maxDurationBox.setText("");
+        minProgress.setValue(0);
+        maxProgress.setValue(100);
+    }
+
+    private void refreshValues(){
+        if (f.hasMinStartDate())
+            datePicker1.setDate(f.getMinStartDate().getTime());
+        if (f.hasMaxStartDate())
+            datePicker2.setDate(f.getMaxStartDate().getTime());
+        if (f.hasMinEndDate())
+            datePicker3.setDate(f.getMinEndDate().getTime());
+        if(f.hasMaxEndDate())
+            datePicker4.setDate(f.getMaxEndDate().getTime());
+        if(f.hasMinPriority())
+            minPrioritySelection.setSelectedIndex(f.getMinPriority().ordinal() + 1);
+        if (f.hasMaxPriority())
+            maxPrioritySelection.setSelectedIndex(f.getMaxPriority().ordinal() + 1);
+        if(f.hasMinLength())
+            minDurationBox.setText(Integer.toString(f.getMinLength()));
+        if (f.hasMaxLength())
+            maxDurationBox.setText(Integer.toString(f.getMaxLength()));
+        if (f.hasMinCompletion())
+            minProgress.getModel().setValue(f.getMinCompletion());
+        if (f.hasMaxCompletion())
+            maxProgress.getModel().setValue(f.getMaxCompletion());
 
     }
 
@@ -180,47 +234,76 @@ public class FilterDialog2 {
         return GanttLanguage.getInstance().getText(key);
     }
 
-    public Date getDatePicker1(){
-        return datePicker1.getDate();
-    }
-    public Date getDatePicker2(){
-        return datePicker1.getDate();
-    }
-    public Date getDatePicker3(){
-        return datePicker1.getDate();
-    }
-    public Date getDatePicker4(){
-        return datePicker1.getDate();
-    }
-
-    public Task.Priority getPriority(){
-        if (prioritySelection.getPrototypeDisplayValue() == "Menor"){
+    public Task.Priority getPriority(String priority){
+        if (priority.equals("Menor")){
             return Task.Priority.getPriority(0);
         }
-        if (prioritySelection.getPrototypeDisplayValue() == "Baixo"){
+        else if (priority.equals("Baixo")){
             return Task.Priority.getPriority(1);
         }
-        if (prioritySelection.getPrototypeDisplayValue() == "Normal"){
+        else if (priority.equals( "Normal")){
             return Task.Priority.getPriority(2);
         }
-        if (prioritySelection.getPrototypeDisplayValue() == "Alto"){
+        else if (priority.equals("Alto")){
             return Task.Priority.getPriority(3);
         }
-        if (prioritySelection.getPrototypeDisplayValue() == "Maior"){
+        else if (priority.equals("Maior")){
             return Task.Priority.getPriority(4);
         }
-        return Task.Priority.getPriority(2);
+        return null;
+    }
+
+    public int getDuration(String duration){
+        int d = -1;
+        try{
+            d = Integer.parseInt(duration);
+        } catch (NumberFormatException e){
+        }
+        return d;
     }
 
     public void updateFilter() {
         //usamos ao clicar no OK depois de inserir os dados do filtro
-        Filter f = new FilterClass();
 
-        if (getDatePicker1() != null) {}
-        //atualizar o f.set...
-        if (getDatePicker2() != null) {}
+        Date minStartDate = datePicker1.getDate();
+        Date maxStartDate = datePicker2.getDate();
+        Date minEndDate = datePicker3.getDate();
+        Date maxEndDate = datePicker4.getDate();
+        Task.Priority minPriority = getPriority((String) minPrioritySelection.getSelectedItem());
+        Task.Priority maxPriority = getPriority((String) maxPrioritySelection.getSelectedItem());
 
-        //...
+        int minDuration = getDuration(minDurationBox.getText());
+        int maxDuration = getDuration(maxDurationBox.getText());
+
+        int minP = (int) minProgress.getValue();
+        int maxP = (int) maxProgress.getValue();
+
+        if (minStartDate != null) {
+            f.setMinStartDate(CalendarFactory.createGanttCalendar(minStartDate));
+        }
+        if (maxStartDate != null) {
+            f.setMaxStartDate(CalendarFactory.createGanttCalendar(maxStartDate));
+        }
+        if (minEndDate != null) {
+            f.setMinEndDate(CalendarFactory.createGanttCalendar(minEndDate));
+        }
+        if (maxEndDate != null) {
+            f.setMaxEndDate(CalendarFactory.createGanttCalendar(maxEndDate));
+        }
+        if (minPriority != null){
+            f.setMinPriority(minPriority);
+        }
+        if (maxPriority != null){
+            f.setMaxPriority(maxPriority);
+        }
+        if (minDuration != -1){
+            f.setMinLength(minDuration);
+        }
+        if (maxDuration != -1){
+            f.setMaxLength(maxDuration);
+        }
+        f.setMaxCompletion(maxP);
+        f.setMinCompletion(minP);
 
         taskManager.setCurrentFilter(f);
     }
