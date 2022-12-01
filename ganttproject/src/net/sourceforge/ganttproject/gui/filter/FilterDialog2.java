@@ -58,126 +58,149 @@ public class FilterDialog2 {
         f = taskManager.getCurrentFilter();
     }
 
-
     public void filterPage() {
 
         final JFrame frame = new JFrame();
         JPanel result = new JPanel();
-        frame.setSize(1000, 600);
+        frame.setSize(1000, 320);
         frame.add(result);
         result.setLayout(null);
 
         datePicker1 = UIUtil.createDatePicker();
-        datePicker1.setBounds(300, 20, 200, 20);
+        datePicker1.setBounds(370, 20, 200, 20);
         result.add(datePicker1);
 
         datePicker2 = UIUtil.createDatePicker();
-        datePicker2.setBounds(700, 20, 200, 20);
+        datePicker2.setBounds(780, 20, 200, 20);
         result.add(datePicker2);
 
         datePicker3 = UIUtil.createDatePicker();
-        datePicker3.setBounds(300, 50, 200, 20);
+        datePicker3.setBounds(370, 50, 200, 20);
         result.add(datePicker3);
 
         datePicker4 = UIUtil.createDatePicker();
-        datePicker4.setBounds(700, 50, 200, 20);
+        datePicker4.setBounds(780, 50, 200, 20);
         result.add(datePicker4);
 
-        JLabel titleDate = new JLabel("Choose Dates: ");
+        JLabel titleDate = new JLabel(i18n("chooseDates"));
         titleDate.setBounds(10,30,230,25);
         result.add(titleDate);
 
-        JLabel initDate1 = new JLabel("Choose Initial Date: ");
-        initDate1.setBounds(190,17,230,25);
-        result.add(initDate1);
+        JLabel minStartDate = new JLabel(i18n("minStartDate"));
+        minStartDate.setBounds(210,17,230,25);
+        result.add(minStartDate);
 
-        JLabel endDate1 = new JLabel("Choose End Date: ");
-        endDate1.setBounds(600,17,230,25);
-        result.add(endDate1);
+        JLabel maxStartDate = new JLabel(i18n("maxStartDate"));
+        maxStartDate.setBounds(600,17,230,25);
+        result.add(maxStartDate);
 
-        JLabel initDate2 = new JLabel("Choose Initial Date: ");
-        initDate2.setBounds(190,47,230,25);
-        result.add(initDate2);
+        JLabel minEndDate = new JLabel(i18n("minEndDate"));
+        minEndDate.setBounds(210,47,230,25);
+        result.add(minEndDate);
 
-        JLabel endDate2 = new JLabel("Choose End Date: ");
-        endDate2.setBounds(600,47,230,25);
-        result.add(endDate2);
+        JLabel maxEndDate = new JLabel(i18n("maxEndDate"));
+        maxEndDate.setBounds(600,47,230,25);
+        result.add(maxEndDate);
 
         Font fn = new Font("Arial", Font.PLAIN, 20);
         titleDate.setFont(fn);
 
-        JLabel titlePriority = new JLabel("Choose Priority: ");
+
+
+        JLabel titlePriority = new JLabel(i18n("choosePriority"));
         titlePriority.setBounds(10,100,230,25);
         result.add(titlePriority);
-
         titlePriority.setFont(fn);
 
-        JLabel titleDuration = new JLabel("Choose Duration: ");
-        titleDuration.setBounds(10,170,230,25);
-        result.add(titleDuration);
+        JLabel minPriority = new JLabel(i18n("minPriority"));
+        minPriority.setBounds(210,100,230,25);
+        result.add(minPriority);
 
-        titleDuration.setFont(fn);
+        JLabel maxPriority = new JLabel(i18n("maxPriority"));
+        maxPriority.setBounds(600,100,230,25);
+        result.add(maxPriority);
 
-        String[] priorities= {"", "Menor", "Baixo", "Normal", "Alto", "Maior"};
+        String[] priorities= {"", i18n("priority.lowest"), i18n("priority.low"), i18n("priority.normal"),
+                i18n("priority.high"), i18n("priority.highest")};
         minPrioritySelection = new JComboBox<>(priorities);
-        minPrioritySelection.setBounds(190,100,230,25);
+        minPrioritySelection.setBounds(370,100,150,25);
         result.add(minPrioritySelection);
 
         maxPrioritySelection = new JComboBox<>(priorities);
-        maxPrioritySelection.setBounds(500,100,230,25);
+        maxPrioritySelection.setBounds(780,100,150,25);
         result.add(maxPrioritySelection);
 
-        JButton okbutton = new JButton("OK");
-        okbutton.setBounds(880, 500, 60, 20);
-        result.add(okbutton);
 
-        JButton resetbutton = new JButton("Reset");
-        resetbutton.setBounds(800, 500, 60, 20);
-        result.add(resetbutton);
+
+        JLabel titleDuration = new JLabel(i18n("chooseDuration"));
+        titleDuration.setBounds(10,150,230,25);
+        result.add(titleDuration);
+        titleDuration.setFont(fn);
 
         minDurationBox = new JTextField();
-        minDurationBox.setBounds(300,170, 230, 25);
+        minDurationBox.setBounds(370,150, 150, 25);
         result.add(minDurationBox);
 
         maxDurationBox = new JTextField();
-        maxDurationBox.setBounds(700,170, 230, 25);
+        maxDurationBox.setBounds(780,150, 150, 25);
         result.add(maxDurationBox);
 
-        JLabel minDuration = new JLabel("Min Duration: ");
-        minDuration.setBounds(190,170,230,25);
+        JLabel minDuration = new JLabel(i18n("minDuration"));
+        minDuration.setBounds(210,150,230,25);
         result.add(minDuration);
 
-        JLabel maxDuration = new JLabel("Max Duration: ");
-        maxDuration.setBounds(600,170,230,25);
+        JLabel maxDuration = new JLabel(i18n("maxDuration"));
+        maxDuration.setBounds(600,150,230,25);
         result.add(maxDuration);
 
-        JLabel progressTitle = new JLabel("Choose Progress: ");
-        progressTitle.setBounds(10,240,230,25);
-        result.add(progressTitle);
 
+
+        JLabel progressTitle = new JLabel(i18n("chooseProgress"));
+        progressTitle.setBounds(10,200,230,25);
+        result.add(progressTitle);
         progressTitle.setFont(fn);
 
+        JLabel minProgressL = new JLabel(i18n("minProgress"));
+        minProgressL.setBounds(210,200,230,25);
+        result.add(minProgressL);
+
+        JLabel maxProgressL = new JLabel(i18n("maxProgress"));
+        maxProgressL.setBounds(600,200,230,25);
+        result.add(maxProgressL);
+
         SpinnerModel minModel = new SpinnerNumberModel(0, 0, 100, 1);
-        minProgress = new JSpinner(minModel);
-        minProgress.setBounds(200, 240, 230,25);
-        result.add(minProgress);
+        this.minProgress = new JSpinner(minModel);
+        this.minProgress.setBounds(370, 200, 100,25);
+        result.add(this.minProgress);
 
         SpinnerModel maxModel = new SpinnerNumberModel(100, 0, 100, 1);
-        maxProgress = new JSpinner(maxModel);
-        maxProgress.setBounds(500, 240, 230,25);
-        result.add(maxProgress);
+        this.maxProgress = new JSpinner(maxModel);
+        this.maxProgress.setBounds(780, 200, 100,25);
+        result.add(this.maxProgress);
 
         refreshValues();
 
-        frame.setTitle("Filter");
-        frame.setVisible(true);
-        frame.setLocation(0,0);
-        frame.setLocation(600, 250);
 
+        JButton okButton = new JButton(i18n("ok"));
+        okButton.setBounds(870, 250, 60, 20);
+        result.add(okButton);
+
+        JButton resetButton = new JButton(i18n("reset"));
+        resetButton.setBounds(780, 250, 60, 20);
+        result.add(resetButton);
+
+
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int)size.getWidth();
+        int height = (int)size.getHeight();
+
+        frame.setTitle(i18n("filter.app"));
+        frame.setVisible(true);
+        frame.setLocation(width/2 - 500, height/2 - 160);
 
         result.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
 
-        resetbutton.addActionListener(new ActionListener() {
+        resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 taskManager.resetFilter();
@@ -185,7 +208,7 @@ public class FilterDialog2 {
                 f = taskManager.getCurrentFilter();
             }
         });
-        okbutton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateFilter();
@@ -235,19 +258,19 @@ public class FilterDialog2 {
     }
 
     public Task.Priority getPriority(String priority){
-        if (priority.equals("Menor")){
+        if (priority.equals(i18n("priority.lowest"))){
             return Task.Priority.getPriority(0);
         }
-        else if (priority.equals("Baixo")){
+        else if (priority.equals(i18n("priority.low"))){
             return Task.Priority.getPriority(1);
         }
-        else if (priority.equals( "Normal")){
+        else if (priority.equals(i18n("priority.normal"))){
             return Task.Priority.getPriority(2);
         }
-        else if (priority.equals("Alto")){
+        else if (priority.equals(i18n("priority.high"))){
             return Task.Priority.getPriority(3);
         }
-        else if (priority.equals("Maior")){
+        else if (priority.equals(i18n("priority.highest"))){
             return Task.Priority.getPriority(4);
         }
         return null;
@@ -263,7 +286,6 @@ public class FilterDialog2 {
     }
 
     public void updateFilter() {
-        //usamos ao clicar no OK depois de inserir os dados do filtro
 
         Date minStartDate = datePicker1.getDate();
         Date maxStartDate = datePicker2.getDate();
@@ -275,33 +297,76 @@ public class FilterDialog2 {
         int minDuration = getDuration(minDurationBox.getText());
         int maxDuration = getDuration(maxDurationBox.getText());
 
+
         int minP = (int) minProgress.getValue();
         int maxP = (int) maxProgress.getValue();
+
+
 
         if (minStartDate != null) {
             f.setMinStartDate(CalendarFactory.createGanttCalendar(minStartDate));
         }
+        else{
+            datePicker1.setDate(null);
+            f.setMinStartDate(null);
+        }
+
         if (maxStartDate != null) {
             f.setMaxStartDate(CalendarFactory.createGanttCalendar(maxStartDate));
         }
+        else{
+            datePicker2.setDate(null);
+            f.setMaxStartDate(null);
+        }
+
         if (minEndDate != null) {
             f.setMinEndDate(CalendarFactory.createGanttCalendar(minEndDate));
         }
+        else{
+            datePicker3.setDate(null);
+            f.setMinEndDate(null);
+        }
+
         if (maxEndDate != null) {
             f.setMaxEndDate(CalendarFactory.createGanttCalendar(maxEndDate));
         }
+        else{
+            datePicker4.setDate(null);
+            f.setMaxEndDate(null);
+        }
+
         if (minPriority != null){
             f.setMinPriority(minPriority);
         }
+        else{
+            minPrioritySelection.setSelectedIndex(0);
+            f.setMinPriority(null);
+        }
+
         if (maxPriority != null){
             f.setMaxPriority(maxPriority);
         }
+        else{
+            maxPrioritySelection.setSelectedIndex(0);
+            f.setMaxPriority(null);
+        }
+
         if (minDuration != -1){
             f.setMinLength(minDuration);
         }
+        else{
+            minDurationBox.setText("");
+            f.setMinLength(-1);
+        }
+
         if (maxDuration != -1){
             f.setMaxLength(maxDuration);
         }
+        else{
+            maxDurationBox.setText("");
+            f.setMaxLength(-1);
+        }
+
         f.setMaxCompletion(maxP);
         f.setMinCompletion(minP);
     }
