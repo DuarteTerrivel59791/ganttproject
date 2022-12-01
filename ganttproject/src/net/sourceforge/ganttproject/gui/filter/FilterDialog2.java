@@ -182,6 +182,7 @@ public class FilterDialog2 {
             public void actionPerformed(ActionEvent e) {
                 taskManager.resetFilter();
                 resetValues();
+                f = taskManager.getCurrentFilter();
             }
         });
         okbutton.addActionListener(new ActionListener() {
@@ -303,7 +304,5 @@ public class FilterDialog2 {
         }
         f.setMaxCompletion(maxP);
         f.setMinCompletion(minP);
-
-        taskManager.setCurrentFilter(f);
     }
 }
