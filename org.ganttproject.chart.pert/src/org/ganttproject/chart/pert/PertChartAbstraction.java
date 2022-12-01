@@ -26,6 +26,7 @@ import biz.ganttproject.core.time.TimeDuration;
 
 import biz.ganttproject.core.time.TimeDurationImpl;
 import biz.ganttproject.core.time.impl.GPTimeUnitStack;
+import net.sourceforge.ganttproject.language.GanttLanguage;
 import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 import net.sourceforge.ganttproject.task.dependency.TaskDependency;
@@ -141,8 +142,7 @@ public class PertChartAbstraction {
         GanttCalendar calendar = CalendarFactory.createGanttCalendar(myTaskManager.getProjectEnd());
         task.setStart(calendar);
         task.setEnd(calendar);
-        task.setName("Finish");
-        //task.shift(new TimeDurationImpl(GPTimeUnitStack.DAY, -1));
+        task.setName(i18n("end"));
         TaskGraphNode dummy = new TaskGraphNode(task);
 
         Iterator<TaskGraphNode> it = myTaskGraph.iterator();
@@ -156,6 +156,9 @@ public class PertChartAbstraction {
         return dummy;
     }
 
+    private static String i18n(String key) {
+        return GanttLanguage.getInstance().getText(key);
+    }
 
   /**
    * PERT graph node abstraction
@@ -209,7 +212,6 @@ public class PertChartAbstraction {
 
     boolean isCritical() {
         return slack.getLength() == 0;
-        //return myTask.isCritical();
     }
 
     @Override
@@ -237,16 +239,6 @@ public class PertChartAbstraction {
         slack = new TimeDurationImpl(GPTimeUnitStack.DAY, days);
 
     }
-
-    /*
-    private void calculateSlack(){ // Isto nao tem em conta os feriados/fins de semana
-       float slackie =  getLFT().getTime().getTime() - getEndDate().getTime().getTime();
-
-       long slackInDays = (long) (slackie/(1000 * 60 * 60 * 24));
-
-       this.slack = new TimeDurationImpl(GPTimeUnitStack.DAY, slackInDays);
-    }
-     */
 
     TimeDuration getSlack(){
         return slack;
@@ -294,7 +286,7 @@ public class PertChartAbstraction {
         return LST;
     }
 
-    void calculateLateDates(){
+    public void calculateLateDates(){
         calculateLateFinish();
         if (LFT != null){
             calculateSlack();

@@ -850,12 +850,10 @@ public class ActivityOnNodeChart extends PertChart {
         g.drawString(language.getText("duration") + ": " + node.getDuration().getLength(), x + getTextPaddingX(),
                 (int) (y + getTextPaddingY() + 4.3 * fontMetrics.getHeight()));
 
-        // TODO: Add Slack, LST and LFT
 
         g.setColor(color);
         g.drawLine(x, (int) (y + getTextPaddingY() + 4.6*fontMetrics.getHeight() + getYOffset()), x + getNodeWidth(), (int) (y + getTextPaddingY() + 4.6*fontMetrics.getHeight()
                         + getYOffset()));
-
 
 
         g.setColor(Color.BLACK);
