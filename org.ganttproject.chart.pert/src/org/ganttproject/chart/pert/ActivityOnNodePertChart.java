@@ -48,21 +48,21 @@ import java.util.List;
 public class ActivityOnNodePertChart extends PertChart {
 
   /** List of abstract nodes. */
-  private List<TaskGraphNode> myTaskGraphNodes;
+  protected List<TaskGraphNode> myTaskGraphNodes;
 
   /** List of graphical arrows. */
-  private List<GraphicalArrow> myGraphicalArrows;
+  protected List<GraphicalArrow> myGraphicalArrows;
 
   /** List of graphical nodes (in relation with abstract nodes) */
-  private List<GraphicalNode> myGraphicalNodes;
+  protected List<GraphicalNode> myGraphicalNodes;
 
   // private Map myMapPositionListOfNodes;
 
   /** Number of columns */
-  private int nbCols;
+  protected int nbCols;
 
   /** PERT chart abstraction used to build graph. */
-  private PertChartAbstraction myPertAbstraction;
+  protected PertChartAbstraction myPertAbstraction;
 
   private int myMaxX = 1;
   private int myMaxY = 1;
@@ -76,12 +76,11 @@ public class ActivityOnNodePertChart extends PertChart {
    */
   private int myXClickedOffset, myYClickedOffset;
 
-  private final static GanttLanguage language = GanttLanguage.getInstance();
+  final static GanttLanguage language = GanttLanguage.getInstance();
 
-  private final static int NODE_WIDTH = 110;// 205;
+  private final static int NODE_WIDTH = 110;
 
   private final static int NODE_HEIGHT = 70;
-  //private final static int NODE_HEIGHT = 170;
 
   private final static int X_GAP = 30;// 60;
 
@@ -98,16 +97,16 @@ public class ActivityOnNodePertChart extends PertChart {
   private final static int Y_OFFSET = 5;
 
   /** Color of the border of normal tasks. */
-  private final static Color NORMAL_COLOR = Color.BLUE.brighter();
+  final static Color NORMAL_COLOR = Color.BLUE.brighter();
 
   /** Color of the border of supertasks. */
-  private final static Color SUPER_COLOR = Color.RED;
+  final static Color SUPER_COLOR = Color.RED;
 
   /** Color of the border of milestones. */
-  private final static Color MILESTONE_COLOR = Color.BLACK;
+  final static Color MILESTONE_COLOR = Color.BLACK;
 
   /** Color of the arrows. */
-  private final static Color ARROW_COLOR = Color.GRAY;
+  final static Color ARROW_COLOR = Color.GRAY;
 
   private final JScrollPane myScrollPane;
 
@@ -122,12 +121,12 @@ public class ActivityOnNodePertChart extends PertChart {
           myPressedGraphicalNode.y = e.getY() - myYClickedOffset;
           if (e.getX() > getPreferredSize().getWidth()) {
             ActivityOnNodePertChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
-                (int) getPreferredSize().getHeight()));
+                    (int) getPreferredSize().getHeight()));
             revalidate();
           }
           if (e.getY() > getPreferredSize().getHeight()) {
             ActivityOnNodePertChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
-                myPressedGraphicalNode.y + getNodeHeight() + getyGap()));
+                    myPressedGraphicalNode.y + getNodeHeight() + getyGap()));
             revalidate();
           }
           repaint();
@@ -200,12 +199,12 @@ public class ActivityOnNodePertChart extends PertChart {
 
 
   /** Graphical nodes width. */
-  private int getNodeWidth() {
+  int getNodeWidth() {
     return (int) (NODE_WIDTH * getDpi());
   }
 
   /** Graphical nodes height. */
-  private  int getNodeHeight() {
+  int getNodeHeight() {
     return (int) (NODE_HEIGHT * getDpi());
   }
 
@@ -232,12 +231,12 @@ public class ActivityOnNodePertChart extends PertChart {
   }
 
   /** X offset for the top left task graph node. */
-  private int getxOffset() {
+  int getxOffset() {
     return (int) (X_OFFSET * getDpi());
   }
 
   /** Y offset for the top left task graph node. */
-  private int getYOffset() {
+  int getYOffset() {
     return (int) (Y_OFFSET * getDpi());
   }
 
@@ -309,7 +308,7 @@ public class ActivityOnNodePertChart extends PertChart {
   }
 
   /** Updates the data for each nodes. */
-  private void updateGraphNodesInfo() {
+  protected void updateGraphNodesInfo() {
     if (myTaskGraphNodes != null) {
       for (TaskGraphNode tgn : myTaskGraphNodes) {
         GraphicalNode graphicalNode = getGraphicalNodeByID(tgn.getID());
@@ -320,7 +319,7 @@ public class ActivityOnNodePertChart extends PertChart {
     }
   }
 
-  private boolean isZeroPosition(TaskGraphNode taskGraphNode) {
+  protected boolean isZeroPosition(TaskGraphNode taskGraphNode) {
     for (TaskGraphNode t : myTaskGraphNodes) {
       if (t.getSuccessors().contains(taskGraphNode)) {
         return false;
@@ -352,7 +351,7 @@ public class ActivityOnNodePertChart extends PertChart {
   private void process() {
     for (TaskGraphNode tgn : myTaskGraphNodes) {
       if (isZeroPosition(tgn)) {
-        add(0, new GraphicalNode(tgn));
+        add(0, new GraphicalNode(tgn, this));
       }
     }
 
@@ -385,20 +384,20 @@ public class ActivityOnNodePertChart extends PertChart {
     if (res != null) {
       return res;
     }
-    return new GraphicalNode(taskGraphNode);
+    return new GraphicalNode(taskGraphNode, this);
   }
 
   private void moveDown(GraphicalNode graphicalNode) {
-    int row = graphicalNode.row;
-    while (this.isOccupied(++row, graphicalNode.col)) {
+    int row = graphicalNode.getRow();
+    while (this.isOccupied(++row, graphicalNode.getCol())) {
       // yup, the body is empty. But there is ++row above.
     }
-    graphicalNode.row = row;
+    graphicalNode.setRow(row);
   }
 
   private GraphicalNode getNode(int row, int col) {
     for (GraphicalNode node : getNodeInColumn(col)) {
-      if (node.row == row) {
+      if (node.getRow() == row) {
         return node;
       }
     }
@@ -409,11 +408,11 @@ public class ActivityOnNodePertChart extends PertChart {
     for (TaskGraphNode successor : graphicalNode.node.getSuccessors()) {
       moveRight(getGraphicalNodeByID(successor.getID()));
     }
-    int newCol = graphicalNode.col + 1;
-    if (isOccupied(graphicalNode.row, newCol)) {
-      moveRight(getNode(graphicalNode.row, newCol));
+    int newCol = graphicalNode.getCol() + 1;
+    if (isOccupied(graphicalNode.getRow(), newCol)) {
+      moveRight(getNode(graphicalNode.getRow(), newCol));
     }
-    graphicalNode.col = newCol;
+    graphicalNode.setCol(newCol);
     if (newCol == nbCols) {
       this.nbCols++;
     }
@@ -421,14 +420,13 @@ public class ActivityOnNodePertChart extends PertChart {
 
   private void remove(GraphicalNode graphicalNode) {
     myGraphicalNodes.remove(graphicalNode);
-
-    if (graphicalNode.col == -1) {
+    if (graphicalNode.getCol() == -1) {
       return;
     }
 
-    for (GraphicalNode gnode : getNodeInColumn(graphicalNode.col)) {
-      if (gnode.row > graphicalNode.row) {
-        gnode.row--;
+    for (GraphicalNode gnode : getNodeInColumn(graphicalNode.getCol())) {
+      if (gnode.getRow() > graphicalNode.getRow()) {
+        gnode.setRow(gnode.getRow() - 1);
       }
     }
 
@@ -436,7 +434,7 @@ public class ActivityOnNodePertChart extends PertChart {
     // Integer(graphicalNode.col))).intValue();
     // rowsList.put(new Integer(graphicalNode.col), new Integer(iNbRow-1));
 
-    if (graphicalNode.col == nbCols - 1) {
+    if (graphicalNode.getCol() == nbCols - 1) {
       List<GraphicalNode> list = getNodeInColumn(this.nbCols - 1);
       while (list.size() == 0) {
         nbCols--;
@@ -444,11 +442,11 @@ public class ActivityOnNodePertChart extends PertChart {
       }
     }
 
-    graphicalNode.row = -1;
-    graphicalNode.col = -1;
+    graphicalNode.setRow(-1);
+    graphicalNode.setCol(-1);
   }
 
-  private GraphicalNode getGraphicalNodeByID(int id) {
+  protected GraphicalNode getGraphicalNodeByID(int id) {
     for (GraphicalNode gn : myGraphicalNodes) {
       if (gn.node.getID() == id) {
         return gn;
@@ -458,8 +456,8 @@ public class ActivityOnNodePertChart extends PertChart {
   }
 
   // TODO Translate:
-  /** ajoute la graphical node dans la map position/liste des successeurs */
-  private void add(int col, GraphicalNode graphicalNode) {
+  /** ajoute la graphical node dans la map position/liste des successeurs Bounjour*/
+  protected void add(int col, GraphicalNode graphicalNode) {
     myGraphicalNodes.remove(graphicalNode);
 
     if (nbCols - 1 < col) {
@@ -471,15 +469,15 @@ public class ActivityOnNodePertChart extends PertChart {
       row++;
     }
 
-    graphicalNode.row = row;
-    graphicalNode.col = col;
+    graphicalNode.setRow(row);
+    graphicalNode.setCol(col);
 
     myGraphicalNodes.add(graphicalNode);
 
     // rowsList.put(new Integer(col), new Integer(iNbRow+1));
   }
 
-  private List<TaskGraphNode> getNodesThatAreInASpecificSuccessorPosition(int col) {
+  protected List<TaskGraphNode> getNodesThatAreInASpecificSuccessorPosition(int col) {
     List<GraphicalNode> graphicaleNodes = getNodeInColumn(col);
     if (graphicaleNodes.size() == 0) {
       return null;
@@ -503,7 +501,7 @@ public class ActivityOnNodePertChart extends PertChart {
   private List<GraphicalNode> getNodeInColumn(int col) {
     List<GraphicalNode> list = new ArrayList<>();
     for (GraphicalNode gnode : myGraphicalNodes) {
-      if (gnode.col == col) {
+      if (gnode.getCol() == col) {
         list.add(gnode);
       }
     }
@@ -512,13 +510,14 @@ public class ActivityOnNodePertChart extends PertChart {
 
   private boolean isOccupied(int row, int col) {
     for (GraphicalNode gnode : getNodeInColumn(col)) {
-      if (gnode.row == row) {
+      if (gnode.getRow() == row) {
         return true;
       }
     }
     return false;
   }
 
+  /*
   private List<TaskGraphNode> getAncestor(TaskGraphNode tgn) {
     List<TaskGraphNode> ancestors = new ArrayList<>();
     for (TaskGraphNode tnode : myTaskGraphNodes) {
@@ -529,13 +528,14 @@ public class ActivityOnNodePertChart extends PertChart {
     }
     return ancestors;
   }
+  */
 
   private boolean isCrossingNode(GraphicalNode gnode) {
-    for (TaskGraphNode ancestor : getAncestor(gnode.node)) {
+    for (TaskGraphNode ancestor : myPertAbstraction.getAncestor(gnode.node)) {
       GraphicalNode gancestor = getGraphicalNodeByID(ancestor.getID());
-      if (gancestor.col < gnode.col - 1) {
-        for (int col = gnode.col - 1; col > gancestor.col; col--) {
-          if (this.isOccupied(gnode.row, col)) {
+      if (gancestor.getCol() < gnode.getCol() - 1) {
+        for (int col = gnode.getCol() - 1; col > gancestor.getCol(); col--) {
+          if (this.isOccupied(gnode.getRow(), col)) {
             return true;
           }
         }
@@ -544,7 +544,7 @@ public class ActivityOnNodePertChart extends PertChart {
     return false;
   }
 
-  private void avoidCrossingNode() {
+  protected void avoidCrossingNode() {
     if (nbCols == 0) {
       return;
     }
@@ -571,16 +571,16 @@ public class ActivityOnNodePertChart extends PertChart {
     int maxUp = Integer.MAX_VALUE, maxDown = -1;
     for (TaskGraphNode successorNode : gnode.node.getSuccessors()) {
       GraphicalNode successor = getGraphicalNodeByID(successorNode.getID());
-      if (successor.row < maxUp) {
-        maxUp = successor.row;
+      if (successor.getRow() < maxUp) {
+        maxUp = successor.getRow();
       }
-      if (successor.row > maxDown) {
-        maxDown = successor.row;
+      if (successor.getRow() > maxDown) {
+        maxDown = successor.getRow();
       }
     }
 
     // Find all other nodes on the same column
-    List<GraphicalNode> otherNodes = this.getNodeInColumn(gnode.col);
+    List<GraphicalNode> otherNodes = this.getNodeInColumn(gnode.getCol());
     otherNodes.remove(gnode);
 
     // TODO Translate
@@ -589,15 +589,15 @@ public class ActivityOnNodePertChart extends PertChart {
     for (GraphicalNode otherNode : otherNodes) {
       for (TaskGraphNode otherSuccessor : otherNode.node.getSuccessors()) {
         GraphicalNode otherSuccessorNode = getGraphicalNodeByID(otherSuccessor.getID());
-        if (maxUp < gnode.row) {
+        if (maxUp < gnode.getRow()) {
           // some arrows are going up
-          if (otherSuccessorNode.row <= gnode.row && !gnodeSuccessors.contains(otherSuccessor)) {
+          if (otherSuccessorNode.getRow() <= gnode.getRow() && !gnodeSuccessors.contains(otherSuccessor)) {
             return true;
           }
         }
-        if (maxDown > gnode.row) {
+        if (maxDown > gnode.getRow()) {
           // some arrow are going down
-          if (otherSuccessorNode.row >= gnode.row && !gnodeSuccessors.contains(otherSuccessor)) {
+          if (otherSuccessorNode.getRow() >= gnode.getRow() && !gnodeSuccessors.contains(otherSuccessor)) {
             return true;
           }
         }
@@ -606,7 +606,7 @@ public class ActivityOnNodePertChart extends PertChart {
     return false;
   }
 
-  private void avoidCrossingLine() {
+  protected void avoidCrossingLine() {
     boolean restart;
     do {
       restart = false;
@@ -627,13 +627,13 @@ public class ActivityOnNodePertChart extends PertChart {
     } while (restart);
   }
 
-  private void removeEmptyColumn() {
+  protected void removeEmptyColumn() {
     for (int col = nbCols - 1; col >= 0; col--) {
       if (this.getNodeInColumn(col).size() == 0) {
         if (col != nbCols - 1) {
           for (int c = col + 1; c < nbCols; c++) {
             for (GraphicalNode gnode : getNodeInColumn(c)) {
-              gnode.col--;
+              gnode.setCol(gnode.getCol()-1);
             }
           }
         }
@@ -657,7 +657,6 @@ public class ActivityOnNodePertChart extends PertChart {
     return image;
   }
 
-  @Override
   public String getName() {
     return language.getText("pertChartLongName");
   }
@@ -679,12 +678,12 @@ public class ActivityOnNodePertChart extends PertChart {
     }
   }
 
-  private void calculateGraphicalNodesCoordinates() {
+  protected void calculateGraphicalNodesCoordinates() {
     setMaxX(0);
     setMaxY(0);
     for (GraphicalNode gnode : myGraphicalNodes) {
-      gnode.x += (getNodeWidth() + getxGap()) * gnode.col;
-      gnode.y += (getNodeHeight() + getyGap()) * gnode.row;
+      gnode.x += (getNodeWidth() + getxGap()) * gnode.getCol();
+      gnode.y += (getNodeHeight() + getyGap()) * gnode.getRow();
 
       setMaxX(gnode.x > getMaxX() ? gnode.x : getMaxX());
       setMaxY(gnode.y > getMaxY() ? gnode.y : getMaxY());
@@ -694,7 +693,7 @@ public class ActivityOnNodePertChart extends PertChart {
     setMaxY(getMaxY() + getNodeHeight() + getyGap());
   }
 
-  private void calculateArrowsCoordinates() {
+  protected void calculateArrowsCoordinates() {
     for (GraphicalNode gn : myGraphicalNodes) {
       for (TaskGraphNode tgn : gn.node.getSuccessors()) {
         int id = tgn.getID();
@@ -719,155 +718,29 @@ public class ActivityOnNodePertChart extends PertChart {
    * Max and min coordinates in the graphics that paints the graphical nodes and
    * arrows.
    */
-  private int getMaxX() {
+  protected int getMaxX() {
     return myMaxX;
   }
 
-  private void setMaxX(int myMaxX) {
+  protected void setMaxX(int myMaxX) {
     this.myMaxX = myMaxX;
   }
 
-  private int getMaxY() {
+  protected int getMaxY() {
     return myMaxY;
   }
 
-  private void setMaxY(int myMaxY) {
+  protected void setMaxY(int myMaxY) {
     this.myMaxY = myMaxY;
   }
 
-  private final static Color defaultBackgroundColor = new Color(0.9f, 0.9f, 0.9f);
+  final static Color defaultBackgroundColor = new Color(0.9f, 0.9f, 0.9f);
 
-  private final static Color defaultCriticalColor = new Color(250, 250, 115).brighter();
+  final static Color defaultCriticalColor = new Color(250, 250, 115).brighter();
   private static int textPaddingX = 10;
 
   private static int textPaddingY = 0;
 
-
-
-  /**
-   * Graphical node that is rendered on graphics.
-   *
-   * @author bbaranne
-   */
-  private class GraphicalNode extends JComponent {
-    private TaskGraphNode node;
-
-    private int col = -1; // determines X
-    private int row = -1;
-
-    private Color backgroundColor = null;
-
-    int x = getxOffset(), y = getxOffset();
-
-    GraphicalNode(TaskGraphNode node) {
-      this.row = -1;
-      this.col = -1;
-      this.node = node;
-      this.backgroundColor = defaultBackgroundColor;
-      if (node.isCritical()) {
-        this.backgroundColor = defaultCriticalColor;
-      }
-    }
-
-    /**
-     * Updates the linked abstract node.
-     *
-     * @param node
-     *          new linked abstract node.
-     */
-    void updateData(TaskGraphNode node) {
-      this.node = node;
-    }
-
-    /**
-     * Paints the graphical node.
-     *
-     * @param g
-     *          Graphics where the graphical node is to be painted.
-     */
-    @Override
-    public void paint(Graphics g) {
-      if (node.isCritical()) {
-        this.backgroundColor = defaultCriticalColor;
-      } else {
-        this.backgroundColor = defaultBackgroundColor;
-      }
-      paintMe(g);
-    }
-
-    /**
-     * Paints the graphical node.
-     *
-     * @param g
-     *          Graphics where the graphical node is to be painted.
-     */
-    private void paintMe(Graphics g) {
-      Font f = g.getFont();
-      g.setFont(getBoldFont());
-      FontMetrics fontMetrics = g.getFontMetrics(g.getFont());
-
-      int type = this.node.getType();
-      Color color;
-      switch (type) {
-      case PertChartAbstraction.Type.NORMAL:
-        color = NORMAL_COLOR;
-        break;
-      case PertChartAbstraction.Type.SUPER:
-        color = SUPER_COLOR;
-        break;
-      case PertChartAbstraction.Type.MILESTONE:
-        color = MILESTONE_COLOR;
-        break;
-      default:
-        color = NORMAL_COLOR;
-      }
-      g.setColor(this.backgroundColor);
-
-      g.fillRoundRect(x, y, getNodeWidth(), getNodeHeight(), 16, 16);
-      g.setColor(color);
-      g.drawRoundRect(x, y, getNodeWidth(), getNodeHeight(), 16, 16);
-      g.drawRoundRect(x + 1, y + 1, getNodeWidth() - 2, getNodeHeight() - 2, 14, 14);
-
-      g.drawLine(x, y + getTextPaddingY() + fontMetrics.getHeight() + getYOffset(), x + getNodeWidth(), y + getTextPaddingY() + fontMetrics.getHeight()
-          + getYOffset());
-
-      g.setColor(Color.BLACK);
-      String name = node.getName();
-
-      g.drawString(StringUtils.getTruncatedString(name, getNodeWidth() - getTextPaddingX(), fontMetrics), x + getTextPaddingX(), y + getTextPaddingY()
-          + fontMetrics.getHeight());
-
-      g.setFont(getBaseFont());
-      fontMetrics = g.getFontMetrics(g.getFont());
-
-      g.setColor(Color.BLACK);
-      g.drawString(language.getText("start") + ": " + node.getStartDate().toString(), x + getTextPaddingX(),
-          (int) (y + getTextPaddingY() + 2.3 * fontMetrics.getHeight()));
-      g.drawString(language.getText("end") + ": " + node.getEndDate().toString(), x + getTextPaddingX(),
-          (int) (y + getTextPaddingY() + 3.3 * fontMetrics.getHeight()));
-
-      if (node.getDuration() != null)
-        g.drawString(language.getText("duration") + ": " + node.getDuration().getLength(), x + getTextPaddingX(),
-            (int) (y + getTextPaddingY() + 4.3 * fontMetrics.getHeight()));
-
-      // TODO: Add Slack, LST and LFT
-      g.setFont(f);
-
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (o instanceof GraphicalNode) {
-        return node.equals(((GraphicalNode) o).node);
-      }
-      return false;
-    }
-
-    @Override
-    public String toString() {
-      return "[" + node.getName() + " (" + col + ") " + node.getSuccessors() + "]";
-    }
-  }
 
   /**
    * Graphical arrow that is rendered on graphics.
@@ -903,10 +776,10 @@ public class ActivityOnNodePertChart extends PertChart {
 
       if (arrowFromY != arrowToY) {
         int[] middleLineX = { arrowFromX + getxGap() / 2 - getArrowCornerWidth(), arrowFromX + getxGap() / 2,
-            arrowFromX + getxGap() / 2, arrowFromX + getxGap() / 2 + getArrowCornerWidth()};
+                arrowFromX + getxGap() / 2, arrowFromX + getxGap() / 2 + getArrowCornerWidth()};
         int[] middleLineY = { arrowFromY,
-            (arrowFromY < arrowToY ? arrowFromY + getArrowCornerWidth() : arrowFromY - getArrowCornerWidth()),
-            (arrowFromY < arrowToY ? arrowToY - getArrowCornerWidth() : arrowToY + getArrowCornerWidth()), arrowToY };
+                (arrowFromY < arrowToY ? arrowFromY + getArrowCornerWidth() : arrowFromY - getArrowCornerWidth()),
+                (arrowFromY < arrowToY ? arrowToY - getArrowCornerWidth() : arrowToY + getArrowCornerWidth()), arrowToY };
         int middleLineNb = middleLineX.length;
         g.drawPolyline(middleLineX, middleLineY, middleLineNb);
 
