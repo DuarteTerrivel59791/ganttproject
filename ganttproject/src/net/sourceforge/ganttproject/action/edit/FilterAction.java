@@ -53,5 +53,4 @@ public class FilterAction extends GPAction {
         dialog = new FilterDialog2(myUiFacade, myProject.getTaskManager());
         dialog.filterPage();
     }
-
 }

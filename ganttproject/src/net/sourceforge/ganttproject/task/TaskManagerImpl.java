@@ -197,7 +197,6 @@ public class TaskManagerImpl implements TaskManager {
 
     void setDirty() {
       isModified = true;
-
     }
   }
 

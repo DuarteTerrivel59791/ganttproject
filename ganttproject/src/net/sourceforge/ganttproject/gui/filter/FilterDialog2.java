@@ -227,7 +227,6 @@ public class FilterDialog2 {
             minProgress.getModel().setValue(f.getMinCompletion());
         if (f.hasMaxCompletion())
             maxProgress.getModel().setValue(f.getMaxCompletion());
-
     }
 
     private static String i18n(String key) {
