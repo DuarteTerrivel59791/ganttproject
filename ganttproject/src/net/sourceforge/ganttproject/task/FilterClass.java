@@ -2,9 +2,7 @@ package net.sourceforge.ganttproject.task;
 
 import biz.ganttproject.core.time.GanttCalendar;
 
-// Ideia: guardar várias variáveis, por exemplo, minDuration, maxDuration, etc
-// E depois ter um metodo que verifique se uma tarefa satisfaz todos os filtros (que nao estejam a null)
-public class FilterClass implements Filter{
+public class FilterClass implements Filter {
 
     private int minLength;
 
@@ -119,18 +117,18 @@ public class FilterClass implements Filter{
         return maxEndDate != null;
     }
 
-    //TODO: Fazer datas inclusivas
     public boolean taskWithinParameters(Task t) {
         return !( (hasMinLength() && t.getDuration().getLength() < minLength)
-        || (hasMaxLength() && t.getDuration().getLength() > maxLength)
-        || (hasMinPriority() && t.getPriority().ordinal() < minPriority.ordinal())
-        || (hasMaxPriority() && t.getPriority().ordinal() > maxPriority.ordinal())
-        || (hasMinCompletion() && t.getCompletionPercentage() < minCompletion)
-        || (hasMaxCompletion() && t.getCompletionPercentage() > maxCompletion)
-        || (hasMinStartDate()) && t.getStart().before(minStartDate)
-        || (hasMaxStartDate()) && t.getStart().after(maxStartDate)
-        || (hasMinEndDate()) && t.getEnd().before(minEndDate)
-        || (hasMaxEndDate()) && t.getEnd().after(maxEndDate) );
+                || (hasMaxLength() && t.getDuration().getLength() > maxLength)
+                || (hasMinPriority() && t.getPriority().ordinal() < minPriority.ordinal())
+                || (hasMaxPriority() && t.getPriority().ordinal() > maxPriority.ordinal())
+                || (hasMinCompletion() && t.getCompletionPercentage() < minCompletion)
+                || (hasMaxCompletion() && t.getCompletionPercentage() > maxCompletion)
+                || (hasMinStartDate()) && t.getStart().before(minStartDate)
+                || (hasMaxStartDate()) && t.getStart().after(maxStartDate)
+                || (hasMinEndDate()) && t.getDisplayEnd().before(minEndDate)
+                || (hasMaxEndDate()) && t.getDisplayEnd().after(maxEndDate));
+
     }
 
     public int getMinLength() {
