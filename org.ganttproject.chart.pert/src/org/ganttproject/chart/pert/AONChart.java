@@ -28,7 +28,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityOnNodeChart extends PertChart {
+public class AONChart extends PertChart {
 
   private final static int NODE_WIDTH = 200;
 
@@ -56,7 +56,7 @@ public class ActivityOnNodeChart extends PertChart {
 
   private final JScrollPane myScrollPane;
 
-  public ActivityOnNodeChart() {
+  public AONChart() {
     setBackground(Color.WHITE.brighter());
 
     this.addMouseMotionListener(new MouseMotionListener() {
@@ -66,12 +66,12 @@ public class ActivityOnNodeChart extends PertChart {
           myPressedGraphicalNode.x = e.getX() - myXClickedOffset;
           myPressedGraphicalNode.y = e.getY() - myYClickedOffset;
           if (e.getX() > getPreferredSize().getWidth()) {
-            ActivityOnNodeChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
+            AONChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
                     (int) getPreferredSize().getHeight()));
             revalidate();
           }
           if (e.getY() > getPreferredSize().getHeight()) {
-            ActivityOnNodeChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
+            AONChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
                     myPressedGraphicalNode.y + getNodeHeight() + getyGap()));
             revalidate();
           }

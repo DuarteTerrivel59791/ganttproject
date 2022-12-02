@@ -20,6 +20,6 @@
    </extension>
    <extension
            point="net.sourceforge.ganttproject.chart">
-      <chart class="org.ganttproject.chart.pert.ActivityOnNodeChart"/>
+      <chart class="org.ganttproject.chart.pert.AONChart"/>
    </extension>
 </plugin>
