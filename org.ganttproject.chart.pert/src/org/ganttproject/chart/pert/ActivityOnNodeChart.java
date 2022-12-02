@@ -18,30 +18,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package org.ganttproject.chart.pert;
 
-import net.sourceforge.ganttproject.GanttExportSettings;
-import net.sourceforge.ganttproject.IGanttProject;
-import net.sourceforge.ganttproject.chart.Chart;
-import net.sourceforge.ganttproject.chart.export.ChartImageVisitor;
-import net.sourceforge.ganttproject.language.GanttLanguage;
-import net.sourceforge.ganttproject.util.StringUtils;
-import org.ganttproject.chart.pert.PertChartAbstraction.TaskGraphNode;
-
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class ActivityOnNodeChart extends ActivityOnNodePertChart {
+public class ActivityOnNodeChart extends PertChart {
 
   private final static int NODE_WIDTH = 200;
 
   private final static int NODE_HEIGHT = 130;
+
 
   public ActivityOnNodeChart() {
     super();
@@ -51,19 +37,11 @@ public class ActivityOnNodeChart extends ActivityOnNodePertChart {
     return language.getText("aonDiagram");
   }
 
-  int getNodeWidth() {
-    return (int) (NODE_WIDTH * getDpi());
-  }
-
-  int getNodeHeight() {
-    return (int) (NODE_HEIGHT * getDpi());
-  }
-
   @Override
   protected void buildPertChart() {
-    if (myPertAbstraction == null) {
-      myPertAbstraction = new PertChartAbstraction(myTaskManager);
-      myTaskGraphNodes = myPertAbstraction.getTaskGraphNodes();
+    if (myAONAbstraction == null) {
+      myAONAbstraction = new AONChartAbstraction(myTaskManager);
+      myTaskGraphNodes = myAONAbstraction.getAONTaskGraphNodes();
       myGraphicalNodes = new ArrayList<>();
       myGraphicalArrows = new ArrayList<>();
       // myMapPositionListOfNodes = new HashMap();
@@ -80,8 +58,8 @@ public class ActivityOnNodeChart extends ActivityOnNodePertChart {
       calculateArrowsCoordinates();
       setPreferredSize(new Dimension(getMaxX(), getMaxY()));
     } else {
-      myPertAbstraction = new PertChartAbstraction(myTaskManager);
-      myTaskGraphNodes = myPertAbstraction.getTaskGraphNodes();
+      myAONAbstraction = new AONChartAbstraction(myTaskManager);
+      myTaskGraphNodes = myAONAbstraction.getAONTaskGraphNodes();
       updateGraphNodesInfo();
     }
   }

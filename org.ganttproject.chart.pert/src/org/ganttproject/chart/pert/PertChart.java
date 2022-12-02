@@ -29,13 +29,18 @@ import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.chart.Chart;
 import net.sourceforge.ganttproject.chart.ChartSelection;
 import net.sourceforge.ganttproject.chart.ChartSelectionListener;
+import net.sourceforge.ganttproject.language.GanttLanguage;
 import net.sourceforge.ganttproject.task.TaskManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.Date;
+import java.util.List;
 
 import static net.sourceforge.ganttproject.gui.UIFacade.DEFAULT_DPI;
 
@@ -47,8 +52,137 @@ public abstract class PertChart extends JPanel implements Chart {
   private Font myBaseFont;
   private Font myBoldFont;
 
-  PertChart() {
+  private static int textPaddingX = 10;
+
+  private static int textPaddingY = 0;
+
+  /** List of abstract nodes. */
+  protected java.util.List<TaskGraphNode> myTaskGraphNodes;
+
+  /** List of graphical arrows. */
+  protected java.util.List<ActivityOnNodePertChart.GraphicalArrow> myGraphicalArrows;
+
+  /** List of graphical nodes (in relation with abstract nodes) */
+  private List<GraphicalNode> myGraphicalNodes;
+
+  /** Number of columns */
+  protected int nbCols;
+
+  /** PERT chart abstraction used to build graph. */
+  private PertChartAbstraction myPertAbstraction;
+
+  private int myMaxX = 1;
+  private int myMaxY = 1;
+
+  /** The currently mouse pressed graphical node. */
+  private GraphicalNode myPressedGraphicalNode;
+
+  /**
+   * Offset between the mouse pointer when clicked on a graphical node and the
+   * top left corner of this same node.
+   */
+  private int myXClickedOffset, myYClickedOffset;
+
+  final static GanttLanguage language = GanttLanguage.getInstance();
+
+  private final JScrollPane myScrollPane;
+  public int getTextPaddingX() {
+    return (int) (textPaddingX * getDpi());
   }
+
+  public int getTextPaddingY() {
+    return (int) (textPaddingY * getDpi());
+  }
+
+  final static Color defaultBackgroundColor = new Color(0.9f, 0.9f, 0.9f);
+
+  final static Color defaultCriticalColor = new Color(250, 250, 115).brighter();
+
+
+  PertChart() {
+    setBackground(Color.WHITE.brighter());
+    this.addMouseMotionListener(new MouseMotionListener() {
+      @Override
+      public void mouseDragged(final MouseEvent e) {
+        if (myPressedGraphicalNode != null) {
+          myPressedGraphicalNode.x = e.getX() - myXClickedOffset;
+          myPressedGraphicalNode.y = e.getY() - myYClickedOffset;
+          if (e.getX() > getPreferredSize().getWidth()) {
+            setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
+                    (int) getPreferredSize().getHeight()));
+            revalidate();
+          }
+          if (e.getY() > getPreferredSize().getHeight()) {
+            setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
+                    myPressedGraphicalNode.y + getNodeHeight() + getyGap()));
+            revalidate();
+          }
+          repaint();
+        }
+      }
+
+      @Override
+      public void mouseMoved(MouseEvent e) {
+        // nothing to do...
+      }
+    });
+
+    this.addMouseListener(new MouseListener() {
+      @Override
+      public void mouseClicked(MouseEvent arg0) {
+        // nothing to do...
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent arg0) {
+        // nothing to do...
+      }
+
+      @Override
+      public void mouseExited(MouseEvent arg0) {
+        // nothing to do...
+      }
+
+      @Override
+      public void mousePressed(MouseEvent e) {
+        myPressedGraphicalNode = getGraphicalNode(e.getX(), e.getY());
+        if (myPressedGraphicalNode != null) {
+          myXClickedOffset = e.getX() - myPressedGraphicalNode.x;
+          myYClickedOffset = e.getY() - myPressedGraphicalNode.y;
+
+          myPressedGraphicalNode.backgroundColor = myPressedGraphicalNode.backgroundColor.darker();
+        }
+        repaint();
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent e) {
+        if (myPressedGraphicalNode != null) {
+          if (myPressedGraphicalNode.node.isCritical()) {
+            myPressedGraphicalNode.backgroundColor = defaultCriticalColor;
+          } else {
+            myPressedGraphicalNode.backgroundColor = defaultBackgroundColor;
+          }
+          myPressedGraphicalNode.x = getGridX(e.getX() - myXClickedOffset + getNodeWidth() / 2);
+          myPressedGraphicalNode.y = getGridY(e.getY());
+          myPressedGraphicalNode = null;
+          repaint();
+        }
+        recalculatPreferredSize();
+        revalidate();
+        repaint();
+      }
+    });
+    myScrollPane = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+  }
+
+  abstract int getNodeHeight();
+
+  abstract int getNodeWidth();
+
+  protected abstract int getxGap();
+
+  protected abstract int getyGap();
 
   @Override
   public void init(IGanttProject project, IntegerOption dpiOption, FontOption chartFontOption) {
@@ -134,4 +268,85 @@ public abstract class PertChart extends JPanel implements Chart {
   Font getBoldFont() {
     return myBoldFont;
   }
+
+  /** Recalculate preferred size so that graphics fit with nodes positions. */
+  private void recalculatPreferredSize() {
+    int maxX = 0;
+    int maxY = 0;
+
+    for (GraphicalNode gn : myGraphicalNodes) {
+      int x = gn.x + getNodeWidth();
+      int y = gn.y + getNodeHeight();
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+    setPreferredSize(new Dimension(maxX, maxY));
+    setMaxX(maxX);
+    setMaxY(maxY);
+  }
+
+  /**
+   * @return The GraphicalNode at the <code>x</code>, <code>y</code> position,
+   *         or <code>null</code> if there is no node.
+   */
+  private GraphicalNode getGraphicalNode(int x, int y) {
+    for (GraphicalNode gn : myGraphicalNodes) {
+      if (isInRectancle(x, y, gn.x, gn.y, getNodeWidth(), getNodeHeight())) {
+        return gn;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @return <code>true</code> if the point of coordinates <code>x</code>,
+   *         <code>y</code> is in the rectangle described by is top left corner
+   *         (<code>rectX</code>, <code>rectY</code>) and dimension (
+   *         <code>rectWidth</code>, <code>rectHeight</code>),
+   *         <code>false</code> otherwise.
+   */
+  private static boolean isInRectancle(int x, int y, int rectX, int rectY, int rectWidth, int rectHeight) {
+    return (x > rectX && x < rectX + rectWidth && y > rectY && y < rectY + rectHeight);
+  }
+
+  /**
+   * Max and min coordinates in the graphics that paints the graphical nodes and
+   * arrows.
+   */
+  protected int getMaxX() {
+    return myMaxX;
+  }
+
+  protected void setMaxX(int myMaxX) {
+    this.myMaxX = myMaxX;
+  }
+
+  protected int getMaxY() {
+    return myMaxY;
+  }
+
+  protected void setMaxY(int myMaxY) {
+    this.myMaxY = myMaxY;
+  }
+  private int getGridX(int x) {
+    int res = getxOffset();
+    int tmp = 0;
+    while (res < x) {
+      tmp = res;
+      res += getNodeWidth() + getxGap();
+    }
+    return tmp;
+  }
+
+  private int getGridY(int y) {
+    int res = getYOffset();
+    int tmp = 0;
+    while (res < y) {
+      tmp = res;
+      res += getNodeHeight() + getyGap();
+    }
+    return tmp;
+  }
+
+
 }

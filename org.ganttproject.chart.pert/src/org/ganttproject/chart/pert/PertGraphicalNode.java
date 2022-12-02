@@ -4,9 +4,9 @@ import net.sourceforge.ganttproject.util.StringUtils;
 
 import java.awt.*;
 
-public class AONGraphicalNode extends GraphicalNode {
+public class PertGraphicalNode extends GraphicalNode{
 
-    AONGraphicalNode(TaskGraphNode node, ActivityOnNodeChart chart) {
+    PertGraphicalNode(TaskGraphNode node, ActivityOnNodePertChart chart) {
         super(node, chart);
     }
 
@@ -55,25 +55,9 @@ public class AONGraphicalNode extends GraphicalNode {
         g.drawString(chart.language.getText("end") + ": " + node.getEndDate().toString(), x + chart.getTextPaddingX(),
                 (int) (y + chart.getTextPaddingY() + 3.3 * fontMetrics.getHeight()));
 
-        if (node.getDuration() != null) {
+        if (node.getDuration() != null)
             g.drawString(chart.language.getText("duration") + ": " + node.getDuration().getLength(), x + chart.getTextPaddingX(),
                     (int) (y + chart.getTextPaddingY() + 4.3 * fontMetrics.getHeight()));
-
-
-            g.setColor(color);
-            g.drawLine(x, (int) (y + chart.getTextPaddingY() + 4.6 * fontMetrics.getHeight() + chart.getYOffset()), x + chart.getNodeWidth(), (int) (y + chart.getTextPaddingY() + 4.6 * fontMetrics.getHeight()
-                    + chart.getYOffset()));
-
-            g.setColor(Color.BLACK);
-            g.drawString(chart.language.getText("lateStart") + ": " + ((AONTaskGraphNode) node).getLST().toString(), x + chart.getTextPaddingX(),
-                    (int) (y + chart.getTextPaddingY() + 6.3 * fontMetrics.getHeight()));
-
-            g.drawString(chart.language.getText("lateFinish") + ": " + ((AONTaskGraphNode) node).getLFT().toString(), x + chart.getTextPaddingX(),
-                    (int) (y + chart.getTextPaddingY() + 7.3 * fontMetrics.getHeight()));
-
-            g.drawString(chart.language.getText("slack") + ": " + ((AONTaskGraphNode) node).getSlack().toString(), x + chart.getTextPaddingX(),
-                    (int) (y + chart.getTextPaddingY() + 8.3 * fontMetrics.getHeight()));
-        }
 
         g.setFont(f);
 
