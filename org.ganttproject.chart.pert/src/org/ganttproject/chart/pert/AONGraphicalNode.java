@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class AONGraphicalNode extends GraphicalNode {
 
-    AONGraphicalNode(PertChartAbstraction.TaskGraphNode node, PertChart chart) {
+    AONGraphicalNode(TaskGraphNode node, PertChart chart) {
         super(node, chart);
     }
 
@@ -27,13 +27,13 @@ public class AONGraphicalNode extends GraphicalNode {
         int type = this.node.getType();
         Color color;
         switch (type) {
-            case PertChartAbstraction.Type.NORMAL:
+            case AONChartAbstraction.Type.NORMAL:
                 color = chart.NORMAL_COLOR;
                 break;
-            case PertChartAbstraction.Type.SUPER:
+            case AONChartAbstraction.Type.SUPER:
                 color = chart.SUPER_COLOR;
                 break;
-            case PertChartAbstraction.Type.MILESTONE:
+            case AONChartAbstraction.Type.MILESTONE:
                 color = chart.MILESTONE_COLOR;
                 break;
             default:
@@ -75,13 +75,14 @@ public class AONGraphicalNode extends GraphicalNode {
 
 
             g.setColor(Color.BLACK);
-            g.drawString(chart.language.getText("lateStart") + ": " + node.getLST().toString(), x + chart.getTextPaddingX(),
+            AONTaskGraphNode auxNode = (AONTaskGraphNode) node;
+            g.drawString(chart.language.getText("lateStart") + ": " + auxNode.getLST().toString(), x + chart.getTextPaddingX(),
                     (int) (y + chart.getTextPaddingY() + 6.3 * fontMetrics.getHeight()));
 
-            g.drawString(chart.language.getText("lateFinish") + ": " + node.getLFT().toString(), x + chart.getTextPaddingX(),
+            g.drawString(chart.language.getText("lateFinish") + ": " + auxNode.getLFT().toString(), x + chart.getTextPaddingX(),
                     (int) (y + chart.getTextPaddingY() + 7.3 * fontMetrics.getHeight()));
 
-            g.drawString(chart.language.getText("slack") + ": " + node.getSlack().toString(), x + chart.getTextPaddingX(),
+            g.drawString(chart.language.getText("slack") + ": " + auxNode.getSlack().toString(), x + chart.getTextPaddingX(),
                     (int) (y + chart.getTextPaddingY() + 8.3 * fontMetrics.getHeight()));
         }
 

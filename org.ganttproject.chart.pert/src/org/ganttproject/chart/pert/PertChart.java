@@ -155,7 +155,7 @@ public abstract class PertChart extends JPanel implements Chart {
   final static Color MILESTONE_COLOR = Color.BLACK;
 
   /** List of abstract nodes. */
-  protected java.util.List<PertChartAbstraction.TaskGraphNode> myTaskGraphNodes;
+  protected java.util.List<TaskGraphNode> myTaskGraphNodes;
 
   /** List of graphical arrows. */
   protected java.util.List<GraphicalArrow> myGraphicalArrows;
@@ -169,7 +169,7 @@ public abstract class PertChart extends JPanel implements Chart {
   protected int nbCols;
 
   /** PERT chart abstraction used to build graph. */
-  protected PertChartAbstraction myPertAbstraction;
+  protected ChartAbstraction myPertAbstraction;
 
   protected int myMaxX = 1;
   protected int myMaxY = 1;
@@ -244,7 +244,7 @@ public abstract class PertChart extends JPanel implements Chart {
   /** Updates the data for each nodes. */
   protected void updateGraphNodesInfo() {
     if (myTaskGraphNodes != null) {
-      for (PertChartAbstraction.TaskGraphNode tgn : myTaskGraphNodes) {
+      for (TaskGraphNode tgn : myTaskGraphNodes) {
         GraphicalNode graphicalNode = getGraphicalNodeByID(tgn.getID());
         if (graphicalNode != null) {
           graphicalNode.updateData(tgn);
@@ -253,8 +253,8 @@ public abstract class PertChart extends JPanel implements Chart {
     }
   }
 
-  protected boolean isZeroPosition(PertChartAbstraction.TaskGraphNode taskGraphNode) {
-    for (PertChartAbstraction.TaskGraphNode t : myTaskGraphNodes) {
+  protected boolean isZeroPosition(TaskGraphNode taskGraphNode) {
+    for (TaskGraphNode t : myTaskGraphNodes) {
       if (t.getSuccessors().contains(taskGraphNode)) {
         return false;
       }
@@ -300,7 +300,7 @@ public abstract class PertChart extends JPanel implements Chart {
   }
 
   protected void moveRight(GraphicalNode graphicalNode) {
-    for (PertChartAbstraction.TaskGraphNode successor : graphicalNode.node.getSuccessors()) {
+    for (TaskGraphNode successor : graphicalNode.node.getSuccessors()) {
       moveRight(getGraphicalNodeByID(successor.getID()));
     }
     int newCol = graphicalNode.getCol() + 1;
@@ -372,13 +372,13 @@ public abstract class PertChart extends JPanel implements Chart {
     // rowsList.put(new Integer(col), new Integer(iNbRow+1));
   }
 
-  protected List<PertChartAbstraction.TaskGraphNode> getNodesThatAreInASpecificSuccessorPosition(int col) {
+  protected List<TaskGraphNode> getNodesThatAreInASpecificSuccessorPosition(int col) {
     List<GraphicalNode> graphicaleNodes = getNodeInColumn(col);
     if (graphicaleNodes.size() == 0) {
       return null;
     }
 
-    List<PertChartAbstraction.TaskGraphNode> res = new ArrayList<>();
+    List<TaskGraphNode> res = new ArrayList<>();
     for (GraphicalNode gn : graphicaleNodes) {
       res.addAll(gn.node.getSuccessors());
     }
@@ -426,7 +426,7 @@ public abstract class PertChart extends JPanel implements Chart {
   */
 
   protected boolean isCrossingNode(GraphicalNode gnode) {
-    for (PertChartAbstraction.TaskGraphNode ancestor : myPertAbstraction.getAncestor(gnode.node)) {
+    for (TaskGraphNode ancestor : myPertAbstraction.getAncestor(gnode.node)) {
       GraphicalNode gancestor = getGraphicalNodeByID(ancestor.getID());
       if (gancestor.getCol() < gnode.getCol() - 1) {
         for (int col = gnode.getCol() - 1; col > gancestor.getCol(); col--) {
@@ -464,7 +464,7 @@ public abstract class PertChart extends JPanel implements Chart {
   protected boolean isCrossingArrow(GraphicalNode gnode) {
     // search for the successors with the highest and lowest position
     int maxUp = Integer.MAX_VALUE, maxDown = -1;
-    for (PertChartAbstraction.TaskGraphNode successorNode : gnode.node.getSuccessors()) {
+    for (TaskGraphNode successorNode : gnode.node.getSuccessors()) {
       GraphicalNode successor = getGraphicalNodeByID(successorNode.getID());
       if (successor.getRow() < maxUp) {
         maxUp = successor.getRow();
@@ -480,9 +480,9 @@ public abstract class PertChart extends JPanel implements Chart {
 
     // TODO Translate
     // parcours des nodes sur la même colonne
-    List<PertChartAbstraction.TaskGraphNode> gnodeSuccessors = gnode.node.getSuccessors();
+    List<TaskGraphNode> gnodeSuccessors = gnode.node.getSuccessors();
     for (GraphicalNode otherNode : otherNodes) {
-      for (PertChartAbstraction.TaskGraphNode otherSuccessor : otherNode.node.getSuccessors()) {
+      for (TaskGraphNode otherSuccessor : otherNode.node.getSuccessors()) {
         GraphicalNode otherSuccessorNode = getGraphicalNodeByID(otherSuccessor.getID());
         if (maxUp < gnode.getRow()) {
           // some arrows are going up
@@ -586,7 +586,7 @@ public abstract class PertChart extends JPanel implements Chart {
 
   protected void calculateArrowsCoordinates() {
     for (GraphicalNode gn : myGraphicalNodes) {
-      for (PertChartAbstraction.TaskGraphNode tgn : gn.node.getSuccessors()) {
+      for (TaskGraphNode tgn : gn.node.getSuccessors()) {
         int id = tgn.getID();
         GraphicalArrow arrow = new GraphicalArrow(gn, getGraphicalNodeByID(id));
         myGraphicalArrows.add(arrow);

@@ -18,23 +18,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package org.ganttproject.chart.pert;
 
-import net.sourceforge.ganttproject.GanttExportSettings;
-import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.chart.Chart;
-import net.sourceforge.ganttproject.chart.export.ChartImageVisitor;
-import net.sourceforge.ganttproject.language.GanttLanguage;
-import net.sourceforge.ganttproject.util.StringUtils;
-import org.ganttproject.chart.pert.PertChartAbstraction.TaskGraphNode;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -199,7 +190,7 @@ public class ActivityOnNodePertChart extends PertChart {
       calculateArrowsCoordinates();
       setPreferredSize(new Dimension(getMaxX(), getMaxY()));
     } else {
-      myPertAbstraction = new PertChartAbstraction(myTaskManager);
+      myPertAbstraction = new AONChartAbstraction(myTaskManager);
       myTaskGraphNodes = myPertAbstraction.getTaskGraphNodes();
       updateGraphNodesInfo();
     }
