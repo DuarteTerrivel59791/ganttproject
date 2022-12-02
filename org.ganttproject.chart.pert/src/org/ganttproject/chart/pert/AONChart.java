@@ -28,19 +28,11 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * PERT chart implementation where nodes are tasks and links succession
- * relations.
- *
- * @author bbaranne
- * @author Julien Seiler
- *
- */
-public class ActivityOnNodePertChart extends PertChart {
+public class AONChart extends PertChart {
 
-  private final static int NODE_WIDTH = 110;
+  private final static int NODE_WIDTH = 200;
 
-  private final static int NODE_HEIGHT = 70;
+  private final static int NODE_HEIGHT = 130;
 
   private final static int X_GAP = 30;// 60;
 
@@ -50,10 +42,21 @@ public class ActivityOnNodePertChart extends PertChart {
 
   private final static int Y_OFFSET = 5;
 
+  /** Color of the border of normal tasks. */
+  final static Color NORMAL_COLOR = Color.BLUE.brighter();
+
+  /** Color of the border of supertasks. */
+  final static Color SUPER_COLOR = Color.RED;
+
+  /** Color of the border of milestones. */
+  final static Color MILESTONE_COLOR = Color.BLACK;
+
+  /** Color of the arrows. */
+  final static Color ARROW_COLOR = Color.GRAY;
 
   private final JScrollPane myScrollPane;
 
-  public ActivityOnNodePertChart() {
+  public AONChart() {
     setBackground(Color.WHITE.brighter());
 
     this.addMouseMotionListener(new MouseMotionListener() {
@@ -63,12 +66,12 @@ public class ActivityOnNodePertChart extends PertChart {
           myPressedGraphicalNode.x = e.getX() - myXClickedOffset;
           myPressedGraphicalNode.y = e.getY() - myYClickedOffset;
           if (e.getX() > getPreferredSize().getWidth()) {
-            ActivityOnNodePertChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
+            AONChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
                     (int) getPreferredSize().getHeight()));
             revalidate();
           }
           if (e.getY() > getPreferredSize().getHeight()) {
-            ActivityOnNodePertChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
+            AONChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
                     myPressedGraphicalNode.y + getNodeHeight() + getyGap()));
             revalidate();
           }
@@ -131,6 +134,10 @@ public class ActivityOnNodePertChart extends PertChart {
     myScrollPane = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
   }
 
+  public String getName() {
+    return language.getText("aonDiagram");
+  }
+
   int getTextPaddingX() {
     return (int) (textPaddingX * getDpi());
   }
@@ -139,12 +146,10 @@ public class ActivityOnNodePertChart extends PertChart {
     return (int) (textPaddingY * getDpi());
   }
 
-  /** Graphical nodes width. */
   int getNodeWidth() {
     return (int) (NODE_WIDTH * getDpi());
   }
 
-  /** Graphical nodes height. */
   int getNodeHeight() {
     return (int) (NODE_HEIGHT * getDpi());
   }
@@ -172,7 +177,7 @@ public class ActivityOnNodePertChart extends PertChart {
   @Override
   protected void buildPertChart() {
     if (myPertAbstraction == null) {
-      myPertAbstraction = new PertChartAbstraction(myTaskManager);
+      myPertAbstraction = new AONChartAbstraction(myTaskManager);
       myTaskGraphNodes = myPertAbstraction.getTaskGraphNodes();
       myGraphicalNodes = new ArrayList<>();
       myGraphicalArrows = new ArrayList<>();
@@ -199,7 +204,7 @@ public class ActivityOnNodePertChart extends PertChart {
   private void process() {
     for (TaskGraphNode tgn : myTaskGraphNodes) {
       if (isZeroPosition(tgn)) {
-        add(0, new GraphicalNode(tgn, this));
+        add(0, new AONGraphicalNode(tgn, this));
       }
     }
 
@@ -222,21 +227,12 @@ public class ActivityOnNodePertChart extends PertChart {
     }
   }
 
-  /**
-   * Creates or gets the graphical node corresponding to the taskGrahNode
-   *
-   * @param taskGraphNode
-   */
   private GraphicalNode createGraphicalNode(TaskGraphNode taskGraphNode) {
     GraphicalNode res = getGraphicalNodeByID(taskGraphNode.getID());
     if (res != null) {
       return res;
     }
-    return new GraphicalNode(taskGraphNode, this);
-  }
-
-  public String getName() {
-    return language.getText("pertChartLongName");
+    return new AONGraphicalNode(taskGraphNode, this);
   }
 
   @Override

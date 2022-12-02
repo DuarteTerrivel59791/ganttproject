@@ -7,16 +7,16 @@ import java.awt.*;
 
 public class GraphicalNode extends JComponent {
 
-        protected PertChartAbstraction.TaskGraphNode node;
+        protected TaskGraphNode node;
         private int col = -1; // determines X
         private int row = -1;
 
         protected Color backgroundColor = null;
 
-        ActivityOnNodePertChart chart;
+        PertChart chart;
         int x , y;
 
-    GraphicalNode(PertChartAbstraction.TaskGraphNode node, ActivityOnNodePertChart chart) {
+    GraphicalNode(TaskGraphNode node, PertChart chart) {
             this.row = -1;
             this.col = -1;
             this.node = node;
@@ -35,7 +35,7 @@ public class GraphicalNode extends JComponent {
          * @param node
          *          new linked abstract node.
          */
-        void updateData(PertChartAbstraction.TaskGraphNode node) {
+        void updateData(TaskGraphNode node) {
             this.node = node;
         }
 
@@ -85,13 +85,13 @@ public class GraphicalNode extends JComponent {
             int type = this.node.getType();
             Color color;
             switch (type) {
-                case PertChartAbstraction.Type.NORMAL:
+                case AONChartAbstraction.Type.NORMAL:
                     color = chart.NORMAL_COLOR;
                     break;
-                case PertChartAbstraction.Type.SUPER:
+                case AONChartAbstraction.Type.SUPER:
                     color = chart.SUPER_COLOR;
                     break;
-                case PertChartAbstraction.Type.MILESTONE:
+                case AONChartAbstraction.Type.MILESTONE:
                     color = chart.MILESTONE_COLOR;
                     break;
                 default:
