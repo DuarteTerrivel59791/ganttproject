@@ -37,18 +37,122 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ActivityOnNodeChart extends ActivityOnNodePertChart {
+public class ActivityOnNodeChart extends PertChart {
 
   private final static int NODE_WIDTH = 200;
 
   private final static int NODE_HEIGHT = 130;
 
+  private final static int X_GAP = 30;// 60;
+
+  private final static int Y_GAP = 15;// 30;
+
+  private final static int X_OFFSET = 5;
+
+  private final static int Y_OFFSET = 5;
+
+  /** Color of the border of normal tasks. */
+  final static Color NORMAL_COLOR = Color.BLUE.brighter();
+
+  /** Color of the border of supertasks. */
+  final static Color SUPER_COLOR = Color.RED;
+
+  /** Color of the border of milestones. */
+  final static Color MILESTONE_COLOR = Color.BLACK;
+
+  /** Color of the arrows. */
+  final static Color ARROW_COLOR = Color.GRAY;
+
+  private final JScrollPane myScrollPane;
+
   public ActivityOnNodeChart() {
-    super();
+    setBackground(Color.WHITE.brighter());
+
+    this.addMouseMotionListener(new MouseMotionListener() {
+      @Override
+      public void mouseDragged(final MouseEvent e) {
+        if (myPressedGraphicalNode != null) {
+          myPressedGraphicalNode.x = e.getX() - myXClickedOffset;
+          myPressedGraphicalNode.y = e.getY() - myYClickedOffset;
+          if (e.getX() > getPreferredSize().getWidth()) {
+            ActivityOnNodeChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
+                    (int) getPreferredSize().getHeight()));
+            revalidate();
+          }
+          if (e.getY() > getPreferredSize().getHeight()) {
+            ActivityOnNodeChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
+                    myPressedGraphicalNode.y + getNodeHeight() + getyGap()));
+            revalidate();
+          }
+          repaint();
+        }
+      }
+
+      @Override
+      public void mouseMoved(MouseEvent e) {
+        // nothing to do...
+      }
+    });
+
+    this.addMouseListener(new MouseListener() {
+      @Override
+      public void mouseClicked(MouseEvent arg0) {
+        // nothing to do...
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent arg0) {
+        // nothing to do...
+      }
+
+      @Override
+      public void mouseExited(MouseEvent arg0) {
+        // nothing to do...
+      }
+
+      @Override
+      public void mousePressed(MouseEvent e) {
+        myPressedGraphicalNode = getGraphicalNode(e.getX(), e.getY());
+        if (myPressedGraphicalNode != null) {
+          myXClickedOffset = e.getX() - myPressedGraphicalNode.x;
+          myYClickedOffset = e.getY() - myPressedGraphicalNode.y;
+
+          myPressedGraphicalNode.backgroundColor = myPressedGraphicalNode.backgroundColor.darker();
+        }
+        repaint();
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent e) {
+        if (myPressedGraphicalNode != null) {
+          if (myPressedGraphicalNode.node.isCritical()) {
+            myPressedGraphicalNode.backgroundColor = defaultCriticalColor;
+          } else {
+            myPressedGraphicalNode.backgroundColor = defaultBackgroundColor;
+          }
+          myPressedGraphicalNode.x = getGridX(e.getX() - myXClickedOffset + getNodeWidth() / 2);
+          myPressedGraphicalNode.y = getGridY(e.getY());
+          myPressedGraphicalNode = null;
+          repaint();
+        }
+        recalculatPreferredSize();
+        revalidate();
+        repaint();
+      }
+    });
+    myScrollPane = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
   }
 
   public String getName() {
     return language.getText("aonDiagram");
+  }
+
+  int getTextPaddingX() {
+    return (int) (textPaddingX * getDpi());
+  }
+
+  int getTextPaddingY() {
+    return (int) (textPaddingY * getDpi());
   }
 
   int getNodeWidth() {
@@ -57,6 +161,26 @@ public class ActivityOnNodeChart extends ActivityOnNodePertChart {
 
   int getNodeHeight() {
     return (int) (NODE_HEIGHT * getDpi());
+  }
+
+  /** Gap between two TaskGraphNodes with the same X coordinate. */
+  int getxGap() {
+    return (int) (X_GAP * getDpi());
+  }
+
+  /** Gap between two TaskGraphNodes with the same Y coordinate. */
+  int getyGap() {
+    return (int) (Y_GAP * getDpi());
+  }
+
+  /** X offset for the top left task graph node. */
+  int getxOffset() {
+    return (int) (X_OFFSET * getDpi());
+  }
+
+  /** Y offset for the top left task graph node. */
+  int getYOffset() {
+    return (int) (Y_OFFSET * getDpi());
   }
 
   @Override
@@ -118,6 +242,17 @@ public class ActivityOnNodeChart extends ActivityOnNodePertChart {
       return res;
     }
     return new AONGraphicalNode(taskGraphNode, this);
+  }
+
+  @Override
+  public Object getAdapter(Class adapter) {
+    if (adapter.equals(Chart.class)) {
+      return this;
+    }
+    if (adapter.equals(Container.class)) {
+      return myScrollPane;
+    }
+    return null;
   }
 
 }

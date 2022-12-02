@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class AONGraphicalNode extends GraphicalNode {
 
-    AONGraphicalNode(PertChartAbstraction.TaskGraphNode node, ActivityOnNodeChart chart) {
+    AONGraphicalNode(PertChartAbstraction.TaskGraphNode node, PertChart chart) {
         super(node, chart);
     }
 

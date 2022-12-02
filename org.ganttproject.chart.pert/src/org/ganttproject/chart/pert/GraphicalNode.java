@@ -13,10 +13,10 @@ public class GraphicalNode extends JComponent {
 
         protected Color backgroundColor = null;
 
-        ActivityOnNodePertChart chart;
+        PertChart chart;
         int x , y;
 
-    GraphicalNode(PertChartAbstraction.TaskGraphNode node, ActivityOnNodePertChart chart) {
+    GraphicalNode(PertChartAbstraction.TaskGraphNode node, PertChart chart) {
             this.row = -1;
             this.col = -1;
             this.node = node;
